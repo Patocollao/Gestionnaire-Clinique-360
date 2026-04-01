@@ -740,9 +740,12 @@ async function saveSession() {
   const p = cfg.pct||30;
   const frais = round2(tarif*p/100);
   const net = round2(tarif-frais);
-  const d = new Date(date);
-  const mois = `${MOIS[d.getMonth()]} ${d.getFullYear()}`;
-  const numFact = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getFullYear()).slice(-2)}`;
+  // Parsear fecha manualmente para evitar desfase de zona horaria (GMT-3, GMT-5, etc.)
+  const parts = date.split('-');
+  const dYear = parseInt(parts[0]);
+  const dMonth = parseInt(parts[1]) - 1; // 0-indexed
+  const mois = `${MOIS[dMonth]} ${dYear}`;
+  const numFact = `${String(dMonth+1).padStart(2,'0')}-${String(dYear).slice(-2)}`;
 
   const sess = { Date_Session:date, Client:`${client.Prénom} ${client.Nom}`, ClientId:clientId, Tarif:tarif, Frais:frais, Net:net, Mois:mois, Facture:numFact, Notes:notes };
 
