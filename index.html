@@ -212,8 +212,30 @@ tbody td { padding: 11px 15px; }
     </div>
   </div>
   <div class="header-actions">
+    <!-- Connection status pill -->
+    <div id="statusPill" style="
+      display:none;
+      align-items:center;
+      gap:7px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:20px;
+      padding:5px 13px;
+      font-size:12px;
+      color:white;
+      white-space:nowrap;
+    ">
+      <span id="statusDot" style="width:8px;height:8px;border-radius:50%;background:#aaa;display:inline-block;transition:background .3s"></span>
+      <span id="statusText">—</span>
+    </div>
+    <!-- Last sync time -->
+    <div id="lastSyncLabel" style="display:none;font-size:11px;color:rgba(255,255,255,0.55);white-space:nowrap">
+      Dernière sync : <span id="lastSyncTime">—</span>
+    </div>
+    <button class="hbtn hbtn-solid" id="syncBtn" onclick="syncData()" style="display:none;gap:6px">
+      🔄 Synchroniser
+    </button>
     <button class="hbtn" onclick="openConfig()">⚙️ Config</button>
-    <button class="hbtn hbtn-solid" id="syncBtn" onclick="syncData()" style="display:none">🔄 Sync</button>
   </div>
 </div>
 
@@ -259,9 +281,9 @@ tbody td { padding: 11px 15px; }
       <div class="fg">
         <label class="fl">Tarif ($) *</label>
         <div class="tarif-btns">
-          <button class="tbtn" onclick="setTarif(120)" id="t120_old">$120_old</button>
           <button class="tbtn" onclick="setTarif(120)" id="t120">$120</button>
-          <button class="tbtn active" onclick="setTarif(140)" id="t140">$140</button>
+          <button class="tbtn" onclick="setTarif(140)" id="t140">$140</button>
+          <button class="tbtn active" onclick="setTarif(150)" id="t150">$150</button>
           <button class="tbtn" onclick="setTarif(0)" id="tOther">Autre</button>
         </div>
         <input type="number" class="fc" id="tarifInput" value="150" min="0" step="5" oninput="updatePreview();unselectTarifBtns()">
@@ -536,8 +558,12 @@ window.onload = () => {
   if (cfg.scriptUrl) {
     document.getElementById('setupBanner').style.display = 'none';
     document.getElementById('syncBtn').style.display = '';
+    setStatus('syncing', 'Connexion…', '');
     syncData();
+    return;
   }
+  // No config yet
+  setStatus('warn', 'Non configuré', '');
 };
 
 function fillSelectors() {
@@ -593,6 +619,8 @@ function saveConfig() {
   if (cfg.demo) { enableDemo(true); return; }
   if (cfg.scriptUrl) {
     document.getElementById('setupBanner').style.display='none';
+  document.getElementById('syncBtn').style.display='none';
+  setStatus('demo', 'Mode démo', clients.length + ' clients');
     document.getElementById('syncBtn').style.display='';
     syncData();
   }
@@ -637,27 +665,63 @@ async function callScript(action, data={}) {
 }
 
 async function syncData() {
-  if (isDemo) return;
+  if (isDemo) {
+    setStatus('demo', 'Mode démo', clients.length + ' clients');
+    return;
+  }
+  if (!cfg.scriptUrl) {
+    setStatus('error', 'Non configuré', 'Cliquez sur Config');
+    return;
+  }
   const btn = document.getElementById('syncBtn');
-  btn.innerHTML = '<span class="spin"></span>';
   btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Sync…';
+  setStatus('syncing', 'Connexion…', '');
+
   try {
-    // Cargar secuencialmente para mejor diagnóstico de errores
     const c = await callScript('getClients');
     clients = c.data || [];
     const s = await callScript('getSessions');
     sessions = s.data || [];
+
     renderClientDropdown();
     renderClientTable();
     loadTodaySessions();
     updateClientCount();
-    toast('✅ Données synchronisées — ' + clients.length + ' clients, ' + sessions.length + ' sessions');
+
+    // Update last sync time
+    const now = new Date();
+    const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('lastSyncTime').textContent = t;
+    document.getElementById('lastSyncLabel').style.display = '';
+
+    setStatus('ok', 'Connecté', clients.length + ' clients · ' + sessions.length + ' sessions');
+    toast('✅ Synchronisé — ' + clients.length + ' clients, ' + sessions.length + ' sessions');
   } catch(e) {
+    setStatus('error', 'Erreur de connexion', e.message.slice(0,40));
     toast('❌ ' + e.message, 'error');
   } finally {
-    btn.innerHTML = '🔄 Sync';
     btn.disabled = false;
+    btn.innerHTML = '🔄 Synchroniser';
   }
+}
+
+function setStatus(state, label, sub) {
+  const pill = document.getElementById('statusPill');
+  const dot  = document.getElementById('statusDot');
+  const txt  = document.getElementById('statusText');
+  pill.style.display = 'flex';
+
+  const states = {
+    ok:      { color: '#52b788', text: '✓ ' + label + (sub ? '  ·  ' + sub : '') },
+    error:   { color: '#e74c3c', text: '✗ ' + label + (sub ? '  —  ' + sub : '') },
+    syncing: { color: '#f39c12', text: '↻ ' + label },
+    demo:    { color: '#f39c12', text: '● Démo  ·  ' + label },
+    warn:    { color: '#f39c12', text: '⚠ ' + label },
+  };
+  const s = states[state] || states.warn;
+  dot.style.background = s.color;
+  txt.textContent = s.text;
 }
 
 async function testGoogleScript() {
@@ -678,7 +742,7 @@ async function testGoogleScript() {
 //  SESSIONS
 // ════════════════════════════
 function setTarif(val) {
-  ['t120','t140','t150','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['t120','t140','t150','tOther'].forEach(id => { var el=document.getElementById(id); if(el) el.classList.remove('active'); });
   if(val===120) document.getElementById('t120').classList.add('active');
   else if(val===140) document.getElementById('t140').classList.add('active');
   else if(val===150) document.getElementById('t150').classList.add('active');
@@ -689,7 +753,7 @@ function setTarif(val) {
 }
 
 function unselectTarifBtns() {
-  ['t120','t140','t150','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['t120','t140','t150','tOther'].forEach(id => { var el=document.getElementById(id); if(el) el.classList.remove('active'); });
 }
 
 function updatePreview() {
@@ -1133,7 +1197,26 @@ function showTab(tab) {
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function v(id){return document.getElementById(id).value.trim();}
 function round2(n){return Math.round(n*100)/100;}
-function fmtDate(d){if(!d)return'—';const p=d.split('-');return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d;}
+function fmtDate(d){
+  if(!d) return '—';
+  var s = String(d);
+  // Handle "Wed Apr 01 2026 00:00:00 GMT-0300..." style dates from Google Sheets
+  if(s.length > 10 && !s.match(/^\d{4}-\d{2}-\d{2}$/)){
+    // Try to extract YYYY-MM-DD from ISO or parse as date
+    var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if(iso) { s = iso[1]+'-'+iso[2]+'-'+iso[3]; }
+    else {
+      // Parse as JS date but use local parts
+      var dt = new Date(d);
+      if(!isNaN(dt)){
+        var y=dt.getFullYear(), mo=String(dt.getMonth()+1).padStart(2,'0'), dy=String(dt.getDate()).padStart(2,'0');
+        s = y+'-'+mo+'-'+dy;
+      }
+    }
+  }
+  var p = s.split('-');
+  return p.length===3 ? p[2]+'-'+p[1]+'-'+p[0] : s;
+}-${p[1]}-${p[0]}`:d;}
 document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');}));
 
 let toastTimer;
