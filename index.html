@@ -253,17 +253,18 @@ tbody td { padding: 11px 15px; }
         </div>
         <select class="fc" id="clientSelect" size="5" style="height:auto;padding:4px 0;" onchange="onClientSelect()"></select>
         <div class="txt-xs txt-muted mt12" id="clientInfo" style="line-height:1.8"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:8px;width:100%" onclick="openAddClient()">+ Nouveau client</button>
       </div>
 
       <div class="fg">
         <label class="fl">Tarif ($) *</label>
         <div class="tarif-btns">
-          <button class="tbtn" onclick="setTarif(100)" id="t100">$100</button>
+          <button class="tbtn" onclick="setTarif(120)" id="t120_old">$120_old</button>
           <button class="tbtn" onclick="setTarif(120)" id="t120">$120</button>
           <button class="tbtn active" onclick="setTarif(140)" id="t140">$140</button>
           <button class="tbtn" onclick="setTarif(0)" id="tOther">Autre</button>
         </div>
-        <input type="number" class="fc" id="tarifInput" value="140" min="0" step="5" oninput="updatePreview();unselectTarifBtns()">
+        <input type="number" class="fc" id="tarifInput" value="150" min="0" step="5" oninput="updatePreview();unselectTarifBtns()">
       </div>
 
       <div class="fg">
@@ -530,7 +531,7 @@ window.onload = () => {
   fillSelectors();
   document.getElementById('sDate').value = today;
   updatePreview();
-  setTarif(140);
+  setTarif(150);
   if (cfg.demo) { enableDemo(true); return; }
   if (cfg.scriptUrl) {
     document.getElementById('setupBanner').style.display = 'none';
@@ -677,10 +678,10 @@ async function testGoogleScript() {
 //  SESSIONS
 // ════════════════════════════
 function setTarif(val) {
-  ['t100','t120','t140','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
-  if(val===100) document.getElementById('t100').classList.add('active');
-  else if(val===120) document.getElementById('t120').classList.add('active');
+  ['t120','t140','t150','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if(val===120) document.getElementById('t120').classList.add('active');
   else if(val===140) document.getElementById('t140').classList.add('active');
+  else if(val===150) document.getElementById('t150').classList.add('active');
   else document.getElementById('tOther').classList.add('active');
   if(val>0) document.getElementById('tarifInput').value = val;
   else document.getElementById('tarifInput').value = '';
@@ -688,7 +689,7 @@ function setTarif(val) {
 }
 
 function unselectTarifBtns() {
-  ['t100','t120','t140','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['t120','t140','t150','tOther'].forEach(id => document.getElementById(id).classList.remove('active'));
 }
 
 function updatePreview() {
@@ -856,34 +857,153 @@ function exportFacture() {
   const sess = sessions.filter(s=>s.Mois===moisStr);
   if (!sess.length) { toast('⚠️ Aucune session pour ce mois','warning'); return; }
 
-  const now=new Date();
-  const dateStr=`${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
-  const totT=sess.reduce((a,s)=>a+s.Tarif,0);
-  const totF=sess.reduce((a,s)=>a+s.Frais,0);
-  const totN=sess.reduce((a,s)=>a+s.Net,0);
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
+  const totT = sess.reduce((a,s)=>a+Number(s.Tarif),0);
+  const totF = sess.reduce((a,s)=>a+Number(s.Frais),0);
+  const totN = sess.reduce((a,s)=>a+Number(s.Net),0);
+  const pct  = cfg.pct || 30;
+  const nomPro      = cfg.nomPro      || '';
+  const titrePro    = cfg.titrePro    || '';
+  const nomClinique = cfg.nomClinique || '';
+  const adresse     = cfg.adresse     || '';
+  const tel         = cfg.tel         || '';
 
-  const rows=[
-    ['FACTURE- SERVICES PROFESSIONNELS EN PSYCHOLOGIE','','','DATE',dateStr],
-    ['Nom du professionnel','','','# FACTURE',numF],
-    [cfg.nomPro||'','','','PÉRIODE',MOIS[m-1]],
-    [cfg.titrePro||'','','','',''],
-    ['CLIENT :','','','',''],
-    [cfg.nomClinique||'','','','',''],
-    [cfg.adresse||'','','','',''],
-    [cfg.tel||'','','','',''],
-    ['','','','',''],
-    ['Date','Client','Tarif',`Frais chargé (${cfg.pct||30}%)`,'Total'],
-    ...sess.map(s=>[fmtDate(s.Date_Session),s.Client,s.Tarif,s.Frais,s.Net]),
-    ['','','','',''],
-    ['TOTAL',`${sess.length} sessions`,totT,totF,totN],
-  ];
+  // ── HTML table approach for Excel (preserves all formatting) ──
+  const sessionRows = sess.map((s,i) => {
+    const bg = i%2===0 ? '#ffffff' : '#fafafa';
+    return `<tr style="background:${bg}">
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${fmtDate(s.Date_Session)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${s.Client}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#333">$${Number(s.Tarif).toFixed(2)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#c0392b">$${Number(s.Frais).toFixed(2)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;font-weight:bold;color:#1a1a1a">$${Number(s.Net).toFixed(2)}</td>
+    </tr>`;
+  }).join('');
 
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:18},{wch:26},{wch:10},{wch:20},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws,`${MOIS[m-1]} ${y}`);
-  XLSX.writeFile(wb,`Facture_${numF}.xlsx`);
-  toast('✅ Facture exportée!');
+  const html = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="UTF-8">
+  <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+  <x:ExcelWorksheet><x:Name>${MOIS[m-1]} ${y}</x:Name>
+  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+  </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+  <style>
+    body { font-family: Calibri, Arial, sans-serif; margin: 0; }
+    table { border-collapse: collapse; width: 100%; }
+    td { vertical-align: top; }
+  </style>
+</head>
+<body>
+<table style="width:720px;margin:0 auto;font-family:Calibri,Arial,sans-serif">
+
+  <!-- TOP MARGIN -->
+  <tr><td colspan="5" style="height:20px"></td></tr>
+
+  <!-- FACTURE TITLE + NUMBER -->
+  <tr>
+    <td colspan="3" style="padding:0 12px">
+      <div style="font-size:32pt;font-weight:bold;letter-spacing:-1px;color:#111111;line-height:1">FACTURE</div>
+      <div style="font-size:10pt;color:#888888;margin-top:2px;letter-spacing:1px;text-transform:uppercase">Services professionnels en psychologie</div>
+    </td>
+    <td colspan="2" style="padding:0 12px;text-align:right;vertical-align:bottom">
+      <div style="font-size:18pt;font-weight:bold;color:#111111">N° ${numF}</div>
+      <div style="font-size:10pt;color:#888888">Date : ${dateStr}</div>
+    </td>
+  </tr>
+
+  <!-- SEPARATOR -->
+  <tr><td colspan="5" style="padding:10px 12px 0">
+    <div style="border-top:2px solid #111111;width:100%"></div>
+  </td></tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:16px"></td></tr>
+
+  <!-- PROFESSIONNEL + PÉRIODE -->
+  <tr>
+    <td colspan="3" style="padding:0 12px">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Professionnel</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${nomPro}</div>
+      <div style="font-size:9pt;color:#666666;margin-top:2px">${titrePro}</div>
+    </td>
+    <td colspan="2" style="padding:0 12px;text-align:right">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Période</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${MOIS[m-1]} ${y}</div>
+    </td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:16px"></td></tr>
+
+  <!-- CLIENT -->
+  <tr>
+    <td colspan="5" style="padding:0 12px">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Destinataire</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${nomClinique}</div>
+      <div style="font-size:9.5pt;color:#555555;margin-top:2px">${adresse}</div>
+      <div style="font-size:9.5pt;color:#555555">${tel}</div>
+    </td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:24px"></td></tr>
+
+  <!-- TABLE HEADER -->
+  <tr style="background:#f2f2f2">
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Date</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Client</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Tarif</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Frais clinique (${pct}%)</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Total net</td>
+  </tr>
+
+  <!-- SESSION ROWS -->
+  ${sessionRows}
+
+  <!-- TOTAL ROW -->
+  <tr>
+    <td colspan="2" style="padding:10px 12px;font-size:11pt;font-weight:bold;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">TOTAL — ${sess.length} consultation(s)</td>
+    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totT.toFixed(2)}</td>
+    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#c0392b;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totF.toFixed(2)}</td>
+    <td style="padding:10px 12px;font-size:12pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totN.toFixed(2)}</td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:48px"></td></tr>
+
+  <!-- SIGNATURE BLOCK -->
+  <tr>
+    <td colspan="2" style="padding:0 12px"></td>
+    <td colspan="3" style="padding:0 12px;text-align:center">
+      <div style="border-top:1px solid #999999;padding-top:6px">
+        <div style="font-size:8.5pt;color:#999999;letter-spacing:0.5px">Signature du professionnel</div>
+        <div style="font-size:9pt;color:#555555;margin-top:4px">${nomPro}</div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- BOTTOM MARGIN -->
+  <tr><td colspan="5" style="height:30px"></td></tr>
+
+</table>
+</body>
+</html>`;
+
+  // Download as .xls (Excel-compatible HTML)
+  const blob = new Blob([html], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `Facture_${numF}_${(nomClinique||'Clinique').replace(/ /g,'_')}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ Facture professionnelle exportée!');
 }
 
 // ════════════════════════════
