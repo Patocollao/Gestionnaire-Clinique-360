@@ -28,17 +28,7 @@
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
 /* HEADER */
-.header {
-  background: var(--accent);
-  color: white;
-  padding: 0 32px;
-  height: 62px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 16px rgba(45,106,79,0.35);
-}
+.header { background: var(--accent); color: white; padding: 0 32px; height: 62px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(45,106,79,0.35); }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 .brand-name { font-family: 'DM Serif Display', serif; font-size: 19px; letter-spacing: .01em; }
@@ -50,21 +40,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .hbtn-solid:hover { background: #f0faf5; }
 
 /* SETUP BANNER */
-#setupBanner {
-  background: #fff8e1;
-  border-bottom: 2px solid #f6c90e;
-  padding: 11px 32px;
-  font-size: 13px;
-  color: #7a5900;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+#setupBanner { background: #fff8e1; border-bottom: 2px solid #f6c90e; padding: 11px 32px; font-size: 13px; color: #7a5900; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 #setupBanner a { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: underline; }
 
 /* TABS */
-.tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 2px; }
+.tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 2px; overflow-x: auto; }
 .tab { padding: 15px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 2.5px solid transparent; color: var(--text2); transition: all .18s; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
 .tab:hover { color: var(--accent); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
@@ -161,11 +141,9 @@ tbody td { padding: 11px 15px; }
 .inv-title { font-family: 'DM Serif Display', serif; font-size: 17px; }
 .inv-body { padding: 16px 22px; display: grid; grid-template-columns: 1fr auto; gap: 18px; background: white; }
 
-/* SPINNER */
+/* SPINNER & EMPTY */
 .spin { width: 17px; height: 17px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: rot .65s linear infinite; display: inline-block; }
 @keyframes rot { to { transform: rotate(360deg); } }
-
-/* EMPTY */
 .empty { text-align: center; padding: 50px 20px; color: var(--text3); }
 .empty-ico { font-size: 44px; margin-bottom: 10px; opacity: .45; }
 .empty-title { font-size: 15px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
@@ -187,11 +165,21 @@ tbody td { padding: 11px 15px; }
 .tbtn:hover { border-color: var(--accent); color: var(--accent); }
 .tbtn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
+/* AIDE & GUIDES STYLES */
+.aide-sec { font-size: 14.5px; line-height: 1.6; color: var(--text); }
+.aide-sec h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--accent); margin-top: 24px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.aide-sec h3:first-child { margin-top: 0; }
+.aide-sec h4 { font-size: 15px; margin: 18px 0 8px; font-weight: 600; }
+.aide-sec p { margin-bottom: 12px; }
+.aide-sec ul { margin-left: 22px; margin-bottom: 16px; }
+.aide-sec li { margin-bottom: 6px; }
+.aide-sec code.inline { background: var(--surface2); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; border: 1px solid var(--border); }
+.aide-sec pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 13px; font-family: monospace; margin: 14px 0; }
+
 @media(max-width:700px){
   .main { padding: 14px; }
   .g2, .g4 { grid-template-columns: 1fr; }
   .header, .tabs { padding-left: 16px; padding-right: 16px; }
-  .tabs { overflow-x: auto; }
 }
 </style>
 </head>
@@ -228,6 +216,7 @@ tbody td { padding: 11px 15px; }
   <div class="tab" onclick="showTab('depenses')" id="tab-depenses"><span>💳</span> Dépenses</div>
   <div class="tab" onclick="showTab('clients')" id="tab-clients"><span>👥</span> Clients</div>
   <div class="tab" onclick="showTab('resume')" id="tab-resume"><span>📊</span> Résumé</div>
+  <div class="tab" onclick="showTab('aide')" id="tab-aide"><span>❓</span> Aide & Guides</div>
 </div>
 
 <div class="main">
@@ -443,6 +432,127 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<div class="page" id="page-aide">
+  
+  <div class="card aide-sec mb20">
+    <h3>📱 Manuel d'utilisation : Gestionnaire Clinique Réseau 360</h3>
+    <p>Cette application est conçue spécifiquement pour simplifier la gestion administrative et la planification fiscale d'un psychologue travaillant comme travailleur autonome pour une clinique au Québec.</p>
+    
+    <h4>1. Configuration Initiale (⚙️ Config)</h4>
+    <p>Avant de commencer, configurez vos données de base. Ces informations sont utilisées pour générer vos factures :</p>
+    <ul>
+      <li><strong>Professionnel :</strong> Votre nom complet et titre (ex. <em>Psychologue, OPQ #...</em>).</li>
+      <li><strong>Clinique :</strong> Les coordonnées de la clinique à qui vous facturez.</li>
+      <li><strong>Facturation :</strong> Le pourcentage retenu par la clinique (par défaut <strong>30%</strong>).</li>
+    </ul>
+
+    <h4>2. Utilisation des onglets principaux</h4>
+    <ul>
+      <li><strong>📋 Nouvelle Session :</strong> Enregistrez chaque consultation. L'application calcule automatiquement la part de la clinique et votre revenu net.</li>
+      <li><strong>👥 Clients :</strong> Votre base de données de patients.</li>
+      <li><strong>💳 Dépenses :</strong> Le registre de vos dépenses professionnelles. Essentiel pour payer moins d'impôts.</li>
+      <li><strong>🧾 Facture :</strong> Génère automatiquement la facture mensuelle pour la clinique. <strong>Confidentialité (Loi 25) :</strong> La facture exportée n'affiche que l'initiale du nom et le prénom. <strong>Épargne :</strong> La colonne jaune vous indique le montant exact à mettre de côté pour vos impôts (minimum garanti de 35%).</li>
+      <li><strong>📊 Résumé :</strong> Votre tableau de bord financier annuel montrant votre revenu net, vos dépenses, l'estimation de vos impôts et l'argent qu'il vous reste réellement "Dans vos poches".</li>
+    </ul>
+  </div>
+
+  <div class="card aide-sec mb20">
+    <h3>💼 Guide des Déductions Fiscales pour Travailleurs Autonomes (Québec)</h3>
+    <p>En tant que travailleur autonome, vous êtes votre propre entreprise. Le gouvernement vous permet de déduire de vos revenus toute dépense engagée dans le but de gagner un revenu professionnel.</p>
+
+    <h4>Règle d'or : Remboursement vs Déduction</h4>
+    <p>Il est faux de penser que le gouvernement "rembourse" vos dépenses. Le gouvernement accorde une <strong>déduction</strong> : il soustrait vos dépenses de vos revenus nets. Le résultat est votre <strong>Revenu Imposable</strong>. Vous récupérez l'équivalent de votre Taux Marginal d'Imposition (TMI). Par exemple, avec un TMI d'environ 36%, chaque dollar de dépense enregistré vous fait économiser 36 cents en impôts.</p>
+
+    <h4>Exemples pratiques : Comment saisir vos dépenses</h4>
+    
+    <p><strong>1. Dépenses à 100% (Usage exclusivement professionnel)</strong><br>
+    <em>Exemple : Frais de l'OPQ ($950).</em> Vous inscrivez <strong>$950</strong> dans l'application. Économie d'impôt réelle : environ $342.</p>
+
+    <p><strong>2. Dépenses mixtes (Usage professionnel et personnel)</strong><br>
+    Vous ne pouvez déduire que la portion professionnelle. Vous devez calculer ce pourcentage <strong>avant</strong> d'entrer le montant dans l'application.</p>
+    <ul>
+      <li><strong>Téléphone cellulaire :</strong> Facture de $50. Usage pro estimé à 50%. Entrez <strong>$25</strong> dans l'application.</li>
+      <li><strong>Internet résidentiel :</strong> Facture de $80. Usage pro (téléthérapie, notes) estimé à 30%. Entrez <strong>$24</strong> dans l'application.</li>
+      <li><strong>Bureau à domicile (Loyer "Tout inclus") :</strong> Loyer de $1,700/mois. Si votre bureau exclusif représente 10% de la superficie totale de votre appartement, entrez <strong>$170</strong> par mois.</li>
+    </ul>
+  </div>
+
+  <div class="card aide-sec">
+    <h3>☁️ Guide de Connexion : Sauvegarde sur Google Sheets</h3>
+    <p>Connectez l'application à votre propre compte Google pour sauvegarder vos clients et sessions en toute sécurité dans le nuage.</p>
+
+    <h4>Étape 1 : Créer le fichier de base de données</h4>
+    <ul>
+      <li>Allez sur <a href="https://sheets.google.com" target="_blank">Google Sheets</a> et créez un fichier vide.</li>
+      <li>Nommez le premier onglet <strong>Clients</strong> et ajoutez ces titres en haut (A1 à H1) :<br> <code class="inline">id | Prénom | Nom | Téléphone | Date_Naissance | Date_Appel | Sexe | Actif</code></li>
+      <li>Ajoutez un deuxième onglet nommé <strong>Sessions</strong> et ajoutez ces titres (A1 à J1) :<br> <code class="inline">id | Date_Session | Client | ClientId | Tarif | Frais | Net | Mois | Facture | Notes</code></li>
+    </ul>
+
+    <h4>Étape 2 : Ajouter le "cerveau" (Apps Script)</h4>
+    <ul>
+      <li>Dans le menu en haut, cliquez sur <strong>Extensions &gt; Apps Script</strong>.</li>
+      <li>Effacez le code présent et copiez/collez celui-ci :</li>
+    </ul>
+    
+<pre><code>function doGet(e) {
+  var action = e.parameter.action;
+  var dataStr = e.parameter.data;
+  var data = dataStr ? JSON.parse(dataStr) : {};
+
+  if (action === 'ping') return ContentService.createTextOutput(JSON.stringify({status: 'ok'})).setMimeType(ContentService.MimeType.JSON);
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (action === 'getClients') {
+    return ContentService.createTextOutput(JSON.stringify({data: getSheetData(ss.getSheetByName("Clients"))})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === 'getSessions') {
+    return ContentService.createTextOutput(JSON.stringify({data: getSheetData(ss.getSheetByName("Sessions"))})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === 'addClient') {
+    var sheet = ss.getSheetByName("Clients");
+    var id = new Date().getTime().toString();
+    sheet.appendRow([id, data.Prénom, data.Nom, data.Téléphone, data.Date_Naissance, data.Date_Appel, data.Sexe, data.Actif]);
+    return ContentService.createTextOutput(JSON.stringify({id: id})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === 'addSession') {
+    var sheet = ss.getSheetByName("Sessions");
+    var id = 's' + new Date().getTime().toString();
+    sheet.appendRow([id, data.Date_Session, data.Client, data.ClientId, data.Tarif, data.Frais, data.Net, data.Mois, data.Facture, data.Notes]);
+    return ContentService.createTextOutput(JSON.stringify({id: id})).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({error: "Action inconnue"})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSheetData(sheet) {
+  if (!sheet) return [];
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  var headers = data[0], result = [];
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i], obj = {};
+    for (var j = 0; j < headers.length; j++) obj[headers[j]] = row[j];
+    result.push(obj);
+  }
+  return result;
+}</code></pre>
+
+    <h4>Étape 3 : Déployer et obtenir votre lien secret</h4>
+    <ul>
+      <li>Cliquez sur 💾 pour sauvegarder.</li>
+      <li>Cliquez sur le bouton bleu <strong>Déployer</strong> (Deploy) &gt; <strong>Nouveau déploiement</strong>.</li>
+      <li>Type : <strong>Application Web</strong> (Web app).</li>
+      <li>Description : <em>Connexion App</em> | Exécuter en tant que : <em>Moi</em> | Qui a accès : <strong>Tous les utilisateurs (Anyone)</strong>.</li>
+      <li>Cliquez sur <strong>Déployer</strong> et autorisez l'accès (cliquez sur Paramètres avancés si Google affiche un avertissement).</li>
+      <li>Copiez l'URL longue générée.</li>
+    </ul>
+
+    <h4>Étape 4 : Lier à votre application</h4>
+    <p>Ouvrez votre application clinique, cliquez sur <strong>⚙️ Config</strong> en haut à droite, collez l'URL dans la section Google Sheets, et cliquez sur <em>Tester la connexion Google</em>.</p>
+  </div>
+
+</div>
+
 </div><div class="mbg" id="cfgModal">
 <div class="modal">
   <div class="modal-title">⚙️ Configuration</div>
@@ -554,7 +664,6 @@ window.onload = () => {
   loadCfg();
   fillSelectors();
   
-  // Cargar gastos desde el almacenamiento local del navegador
   try {
     const savedDep = localStorage.getItem('clinique360_depenses');
     if (savedDep) depenses = JSON.parse(savedDep);
@@ -647,7 +756,6 @@ function saveDepense() {
   const dep = { id: 'd'+Date.now(), date: date, category: cat, amount: amt, notes: notes };
   depenses.push(dep);
   
-  // Guardar en el navegador (localStorage) para no afectar el Google Apps Script
   localStorage.setItem('clinique360_depenses', JSON.stringify(depenses));
   
   toast('✅ Dépense enregistrée');
@@ -752,7 +860,6 @@ function enableDemo(silent=false) {
   clients = JSON.parse(JSON.stringify(DEMO_CLIENTS));
   sessions = JSON.parse(JSON.stringify(DEMO_SESSIONS));
   
-  // Solo sobreescribimos gastos en demo si no hay ninguno guardado
   if(depenses.length === 0) depenses = JSON.parse(JSON.stringify(DEMO_DEPENSES));
   
   document.getElementById('setupBanner').style.display='none';
