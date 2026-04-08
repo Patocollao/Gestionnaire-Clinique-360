@@ -290,7 +290,7 @@ tbody td { padding: 11px 15px; }
 
       <div class="fg">
         <label class="fl">Date de la session *</label>
-        <input type="date" class="fc" id="sDate">
+        <input type="date" class="fc" id="sDate" onchange="loadTodaySessions()">
       </div>
 
       <div class="fg">
@@ -336,11 +336,11 @@ tbody td { padding: 11px 15px; }
       
       <div class="card">
         <div class="flex aic jsb mb16">
-          <div class="card-title" style="margin:0">Sessions d'aujourd'hui</div>
+          <div class="card-title" style="margin:0" id="todayCardTitle">Sessions du jour</div>
           <span class="badge badge-gold" id="todayCount">0 session(s)</span>
         </div>
         <div id="todayList">
-          <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session aujourd'hui</div></div>
+          <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>
         </div>
       </div>
     </div>
@@ -406,6 +406,9 @@ tbody td { padding: 11px 15px; }
     <div class="card">
       <div class="card-title">💳 Ajouter une dépense</div>
       <div class="card-sub">Déductible d'impôt (Formulaire TP-80)</div>
+      <div class="alert alert-info" style="margin-bottom:16px;font-size:12.5px">
+        ☁️ <strong>Sauvegarde Google Sheets :</strong> Les dépenses sont synchronisées dans votre feuille Google (onglet <strong>Depenses</strong>). En mode démo, elles sont temporaires (mémoire uniquement).
+      </div>
       
       <div class="fg">
         <label class="fl">Date</label>
@@ -538,7 +541,7 @@ tbody td { padding: 11px 15px; }
   <div class="card">
     <div class="tw">
       <table>
-        <thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Naissance</th><th>Date d'appel</th><th>Statut</th><th>Sessions</th></tr></thead>
+        <thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Naissance</th><th>Date d'appel</th><th>Statut</th><th>Sessions</th><th></th></tr></thead>
         <tbody id="clientTbody"></tbody>
       </table>
     </div>
@@ -638,13 +641,95 @@ tbody td { padding: 11px 15px; }
       <li>Allez sur <a href="https://sheets.google.com" target="_blank">Google Sheets</a> et créez un fichier vide.</li>
       <li>Nommez le premier onglet <strong>Clients</strong> et ajoutez ces titres en haut (A1 à H1) :<br> <code class="inline">id | Prénom | Nom | Téléphone | Date_Naissance | Date_Appel | Sexe | Actif</code></li>
       <li>Ajoutez un deuxième onglet nommé <strong>Sessions</strong> et ajoutez ces titres (A1 à J1) :<br> <code class="inline">id | Date_Session | Client | ClientId | Tarif | Frais | Net | Mois | Facture | Notes</code></li>
+      <li>Ajoutez un troisième onglet nommé <strong>Depenses</strong> (sans accent !) et ajoutez ces titres (A1 à G1) :<br> <code class="inline">id | date | category | pctDed | amountTotal | amountDed | notes</code></li>
     </ul>
+
+    <h4>⚠️ Important : si vous aviez déjà un Apps Script déployé</h4>
+    <p>Vous devez <strong>créer un nouveau déploiement</strong> (pas modifier l'existant) après avoir remplacé le code, sinon les nouvelles actions (<code class="inline">getDepenses</code>, <code class="inline">addDepense</code>, <code class="inline">deleteDepense</code>) ne fonctionneront pas.</p>
 
     <h4>Étape 2 : Ajouter le "cerveau" (Apps Script)</h4>
     <ul>
       <li>Dans le menu en haut, cliquez sur <strong>Extensions &gt; Apps Script</strong>.</li>
-      <li>Effacez le code présent et copiez/collez celui de la version précédente.</li>
+      <li>Effacez le code présent et copiez/collez <strong>exactement</strong> ce code :</li>
     </ul>
+
+<pre><code>function doGet(e) {
+  var action = e.parameter.action;
+  var dataStr = e.parameter.data;
+  var data = dataStr ? JSON.parse(dataStr) : {};
+
+  if (action === 'ping') return json({status: 'ok'});
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // ── CLIENTS ──
+  if (action === 'getClients')
+    return json({data: getSheetData(ss.getSheetByName("Clients"))});
+
+  if (action === 'addClient') {
+    var sheet = ss.getSheetByName("Clients");
+    var id = new Date().getTime().toString();
+    sheet.appendRow([id, data["Prénom"], data["Nom"], data["Téléphone"],
+                     data["Date_Naissance"], data["Date_Appel"], data["Sexe"], data["Actif"]]);
+    return json({id: id});
+  }
+
+  // ── SESSIONS ──
+  if (action === 'getSessions')
+    return json({data: getSheetData(ss.getSheetByName("Sessions"))});
+
+  if (action === 'addSession') {
+    var sheet = ss.getSheetByName("Sessions");
+    var id = 's' + new Date().getTime().toString();
+    sheet.appendRow([id, data.Date_Session, data.Client, data.ClientId,
+                     data.Tarif, data.Frais, data.Net, data.Mois, data.Facture, data.Notes]);
+    return json({id: id});
+  }
+
+  // ── DÉPENSES ──
+  if (action === 'getDepenses')
+    return json({data: getSheetData(ss.getSheetByName("Depenses"))});
+
+  if (action === 'addDepense') {
+    var sheet = ss.getSheetByName("Depenses");
+    var id = 'd' + new Date().getTime().toString();
+    sheet.appendRow([id, data.date, data.category,
+                     data.pctDed, data.amountTotal, data.amountDed, data.notes]);
+    return json({id: id});
+  }
+
+  if (action === 'deleteDepense') {
+    var sheet = ss.getSheetByName("Depenses");
+    var rows = sheet.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]) === String(data.id)) {
+        sheet.deleteRow(i + 1);
+        return json({deleted: true});
+      }
+    }
+    return json({deleted: false, error: 'Not found'});
+  }
+
+  return json({error: "Action inconnue"});
+}
+
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSheetData(sheet) {
+  if (!sheet) return [];
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  var headers = data[0], result = [];
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i], obj = {};
+    for (var j = 0; j < headers.length; j++) obj[headers[j]] = row[j];
+    result.push(obj);
+  }
+  return result;
+}</code></pre>
 
     <h4>Étape 3 : Déployer et obtenir votre lien secret</h4>
     <ul>
@@ -778,11 +863,6 @@ window.onload = () => {
   loadCfg();
   fillSelectors();
   
-  try {
-    const savedDep = localStorage.getItem('clinique360_depenses');
-    if (savedDep) depenses = JSON.parse(savedDep);
-  } catch(e) {}
-
   document.getElementById('sDate').value = today;
   document.getElementById('dDate').value = today;
   updatePreview();
@@ -923,7 +1003,7 @@ function updateDepPreview() {
   box.classList.add('visible');
 }
 
-function saveDepense() {
+async function saveDepense() {
   const date = v('dDate');
   const rawCat = document.getElementById('dCat').value;
   const catLabel = getCatLabel(rawCat);
@@ -954,18 +1034,31 @@ function saveDepense() {
     notes
   };
 
-  depenses.push(dep);
-  localStorage.setItem('clinique360_depenses', JSON.stringify(depenses));
-  
-  const msg = pctDed < 100
-    ? `✅ Dépense enregistrée — $${amountDed.toFixed(2)} déductibles (${pctDed}% de $${totalAmt.toFixed(2)})`
-    : `✅ Dépense enregistrée — $${amountDed.toFixed(2)} déductibles`;
-  toast(msg);
+  const btn = document.querySelector('#page-depenses .btn-primary');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Enregistrement…'; }
 
-  document.getElementById('dAmount').value = '';
-  document.getElementById('dNotes').value = '';
-  document.getElementById('depDeductionBox').classList.remove('visible');
-  renderDepenses();
+  try {
+    if (isDemo || !cfg.scriptUrl) {
+      depenses.push(dep);
+      toast('✅ Dépense enregistrée (démo — non sauvegardée)');
+    } else {
+      const res = await callScript('addDepense', dep);
+      dep.id = res.id || dep.id;
+      depenses.push(dep);
+      const msg = pctDed < 100
+        ? `✅ Dépense sauvegardée — $${amountDed.toFixed(2)} déductibles (${pctDed}%)`
+        : `✅ Dépense sauvegardée — $${amountDed.toFixed(2)} déductibles`;
+      toast(msg);
+    }
+    document.getElementById('dAmount').value = '';
+    document.getElementById('dNotes').value = '';
+    document.getElementById('depDeductionBox').classList.remove('visible');
+    renderDepenses();
+  } catch(e) {
+    toast('❌ ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Ajouter la dépense'; }
+  }
 }
 
 function renderDepenses() {
@@ -1013,11 +1106,18 @@ function renderDepenses() {
   </div>`;
 }
 
-function deleteDepense(id) {
-  depenses = depenses.filter(e => e.id !== id);
-  localStorage.setItem('clinique360_depenses', JSON.stringify(depenses));
-  renderDepenses();
-  toast('🗑️ Dépense supprimée');
+async function deleteDepense(id) {
+  if (!confirm('Supprimer cette dépense ?')) return;
+  try {
+    if (!isDemo && cfg.scriptUrl) {
+      await callScript('deleteDepense', { id });
+    }
+    depenses = depenses.filter(e => String(e.id) !== String(id));
+    renderDepenses();
+    toast('🗑️ Dépense supprimée');
+  } catch(e) {
+    toast('❌ ' + e.message, 'error');
+  }
 }
 
 // ════════════════════════════
@@ -1080,8 +1180,8 @@ function enableDemo(silent=false) {
   clients = JSON.parse(JSON.stringify(DEMO_CLIENTS));
   sessions = JSON.parse(JSON.stringify(DEMO_SESSIONS));
   
-  if(depenses.length === 0) depenses = JSON.parse(JSON.stringify(DEMO_DEPENSES));
-  
+  depenses = JSON.parse(JSON.stringify(DEMO_DEPENSES));
+
   document.getElementById('setupBanner').style.display='none';
   renderClientDropdown();
   renderClientTable();
@@ -1127,18 +1227,26 @@ async function syncData() {
     clients = c.data || [];
     const s = await callScript('getSessions');
     sessions = s.data || [];
-    
+    const d = await callScript('getDepenses');
+    depenses = (d.data || []).map(e => ({
+      ...e,
+      pctDed: Number(e.pctDed) || 100,
+      amountTotal: Number(e.amountTotal) || 0,
+      amountDed: Number(e.amountDed) || 0
+    }));
+
     renderClientDropdown();
     renderClientTable();
     loadTodaySessions();
     updateClientCount();
+    renderDepenses();
 
     const now = new Date();
     const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     document.getElementById('lastSyncTime').textContent = t;
     document.getElementById('lastSyncLabel').style.display = '';
 
-    setStatus('ok', 'Connecté', clients.length + ' clients');
+    setStatus('ok', 'Connecté', clients.length + ' clients · ' + depenses.length + ' dépenses');
     toast('✅ Synchronisé avec Google Sheets');
   } catch(e) {
     setStatus('error', 'Erreur de connexion', e.message.slice(0,40));
@@ -1273,29 +1381,37 @@ async function saveSession() {
 }
 
 function loadTodaySessions() {
-  const todaySess = sessions.filter(s=>s.Date_Session===today);
+  const selDate = document.getElementById('sDate').value || today;
+  const todaySess = sessions.filter(s=>s.Date_Session===selDate);
+
+  // Update card title dynamically
+  const titleEl = document.getElementById('todayCardTitle');
+  if (titleEl) {
+    titleEl.textContent = selDate === today ? "Sessions d'aujourd'hui" : "Sessions du " + fmtDate(selDate);
+  }
+
   document.getElementById('todayCount').textContent=`${todaySess.length} session(s)`;
   const el = document.getElementById('todayList');
   if (!todaySess.length) {
-    el.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session aujourd\'hui</div></div>';
+    el.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>';
     return;
   }
-  const totT=todaySess.reduce((a,s)=>a+s.Tarif,0);
-  const totF=todaySess.reduce((a,s)=>a+s.Frais,0);
-  const totN=todaySess.reduce((a,s)=>a+s.Net,0);
+  const totT=todaySess.reduce((a,s)=>a+(Number(s.Tarif)||0),0);
+  const totF=todaySess.reduce((a,s)=>a+(Number(s.Frais)||0),0);
+  const totN=todaySess.reduce((a,s)=>a+(Number(s.Net)||0),0);
   el.innerHTML=`<div class="tw"><table>
     <thead><tr><th>Client</th><th>Tarif</th><th>Frais</th><th>Net</th></tr></thead>
     <tbody>${todaySess.map(s=>`<tr>
       <td><strong>${s.Client}</strong></td>
-      <td>$${s.Tarif}</td>
-      <td class="c-red">-$${s.Frais}</td>
-      <td class="c-green fw6">$${s.Net}</td>
+      <td>$${Number(s.Tarif).toFixed(2)}</td>
+      <td class="c-red">-$${Number(s.Frais).toFixed(2)}</td>
+      <td class="c-green fw6">$${Number(s.Net).toFixed(2)}</td>
     </tr>`).join('')}</tbody>
     <tfoot><tr>
       <td class="tfoot">TOTAL</td>
-      <td class="tfoot">$${totT}</td>
-      <td class="tfoot c-red">-$${totF}</td>
-      <td class="tfoot c-green">$${totN}</td>
+      <td class="tfoot">$${totT.toFixed(2)}</td>
+      <td class="tfoot c-red">-$${totF.toFixed(2)}</td>
+      <td class="tfoot c-green">$${totN.toFixed(2)}</td>
     </tr></tfoot>
   </table></div>`;
 }
@@ -1304,7 +1420,7 @@ function renderClientTable() {
   const actifs = clients.filter(c=>c.Actif!=='Non');
   const tbody = document.getElementById('clientTbody');
   if (!actifs.length) {
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text3)">Aucun client</td></tr>';
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text3)">Aucun client</td></tr>';
     return;
   }
   tbody.innerHTML=actifs.map(c=>{
@@ -1317,6 +1433,7 @@ function renderClientTable() {
       <td>${c.Date_Appel||'—'}</td>
       <td><span class="badge ${c.Actif==='Oui'?'badge-green':'badge-gray'}">${c.Actif==='Oui'?'Actif':'Inactif'}</span></td>
       <td><span class="badge badge-gold">${sessCount}</span></td>
+      <td><button class="btn btn-danger" onclick="confirmDeleteClient('${c.id}','${c.Prénom} ${c.Nom}')">✕ Supprimer</button></td>
     </tr>`;
   }).join('');
 }
@@ -1358,6 +1475,15 @@ async function saveNewClient() {
     renderClientTable();
     updateClientCount();
   } catch(e){toast('❌ '+e.message,'error');}
+}
+
+function confirmDeleteClient(id, name) {
+  if (!confirm(`Supprimer le client "${name}" ?\n\nSes sessions enregistrées ne seront pas supprimées.`)) return;
+  clients = clients.filter(c => String(c.id) !== String(id));
+  renderClientDropdown();
+  renderClientTable();
+  updateClientCount();
+  toast(`🗑️ Client "${name}" supprimé`);
 }
 
 // ════════════════════════════
