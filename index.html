@@ -110,11 +110,14 @@ tbody td { padding: 11px 15px; }
 .badge-gray { background: #f0f0f0; color: #777; }
 .badge-gold { background: #fff3cd; color: #856404; }
 .badge-purple { background: #f3e8ff; color: #6b21a8; }
+.badge-blue { background: #dbeafe; color: #1d4ed8; }
+.badge-orange { background: #ffedd5; color: #c2410c; }
 
 /* ALERT */
 .alert { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; }
 .alert-info { background: #e8f4fd; border: 1px solid #bee3f8; color: #2c5282; }
 .alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
 
 /* PREVIEW */
 .preview { background: var(--surface2); border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 18px; margin-top: 14px; }
@@ -164,6 +167,61 @@ tbody td { padding: 11px 15px; }
 .tbtn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text2); transition: all .15s; }
 .tbtn:hover { border-color: var(--accent); color: var(--accent); }
 .tbtn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ──────────────────────────────────────────
+   DÉPENSES — SECTION AMÉLIORÉE
+   ────────────────────────────────────────── */
+
+/* Boîte de déduction avec aperçu calculé */
+.dep-deduction-box {
+  background: linear-gradient(135deg, #f0fdf4 0%, #fafff7 100%);
+  border: 1.5px solid #bbf7d0;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-top: 8px;
+  display: none;
+}
+.dep-deduction-box.visible { display: block; }
+.dep-deduction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 4px 0;
+}
+.dep-deduction-row .lbl { color: var(--text2); }
+.dep-deduction-row .val { font-weight: 700; }
+.dep-deduction-row .val-green { color: var(--accent); font-weight: 700; }
+.dep-deduction-row .val-gray { color: var(--text3); text-decoration: line-through; font-weight: 400; }
+
+/* Séparateur de catégorie dans la liste */
+.dep-cat-header {
+  background: var(--surface2);
+  padding: 7px 15px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Pill de pourcentage dans le tableau */
+.pct-pill {
+  display: inline-block;
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #fde68a;
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.pct-pill-100 {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
 
 /* AIDE & GUIDES STYLES */
 .aide-sec { font-size: 14.5px; line-height: 1.6; color: var(--text); }
@@ -221,6 +279,9 @@ tbody td { padding: 11px 15px; }
 
 <div class="main">
 
+<!-- ══════════════════════════════════════════
+     PAGE : NOUVELLE SESSION
+═══════════════════════════════════════════ -->
 <div class="page active" id="page-sessions">
   <div class="g2" style="align-items:start">
     <div class="card">
@@ -267,9 +328,9 @@ tbody td { padding: 11px 15px; }
         <div class="card-title">Aperçu du calcul</div>
         <div class="card-sub" id="pctLabel">Frais clinique : 30% · Votre part : 70%</div>
         <div class="preview">
-          <div class="preview-row"><span class="lbl">Tarif consultation</span><span id="pTarif" class="c-bold">$140.00</span></div>
-          <div class="preview-row"><span class="lbl">Frais clinique (<span id="pPctLbl">30</span>%)</span><span id="pFrais" class="c-red">-$42.00</span></div>
-          <div class="preview-row"><span class="lbl">✅ Votre revenu net</span><span id="pTotal" class="c-green">$98.00</span></div>
+          <div class="preview-row"><span class="lbl">Tarif consultation</span><span id="pTarif" class="c-bold">$150.00</span></div>
+          <div class="preview-row"><span class="lbl">Frais clinique (<span id="pPctLbl">30</span>%)</span><span id="pFrais" class="c-red">-$45.00</span></div>
+          <div class="preview-row"><span class="lbl">✅ Votre revenu net</span><span id="pTotal" class="c-green">$105.00</span></div>
         </div>
       </div>
       
@@ -286,6 +347,9 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE : FACTURE
+═══════════════════════════════════════════ -->
 <div class="page" id="page-facture">
   <div class="card mb20">
     <div class="flex jsb aic" style="flex-wrap:wrap;gap:12px">
@@ -332,8 +396,13 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE : DÉPENSES  (VERSION AMÉLIORÉE)
+═══════════════════════════════════════════ -->
 <div class="page" id="page-depenses">
   <div class="g2" style="align-items:start">
+
+    <!-- ─── FORMULAIRE ─── -->
     <div class="card">
       <div class="card-title">💳 Ajouter une dépense</div>
       <div class="card-sub">Déductible d'impôt (Formulaire TP-80)</div>
@@ -342,31 +411,106 @@ tbody td { padding: 11px 15px; }
         <label class="fl">Date</label>
         <input type="date" class="fc" id="dDate">
       </div>
+
+      <!-- Catégorie avec groupes -->
       <div class="fg">
         <label class="fl">Catégorie</label>
-        <select class="fc" id="dCat">
-          <option>Cotisations prof. (OPQ)</option>
-          <option>Assurances (Responsabilité)</option>
-          <option>Frais de formation / Congrès</option>
-          <option>Fournitures de bureau / Tests</option>
-          <option>Télécommunications (Internet/Cell)</option>
-          <option>Frais de représentation (Repas)</option>
-          <option>Frais de véhicule (Déplacements)</option>
-          <option>Bureau à domicile (Loyer/Élec.)</option>
-          <option>Autre dépense admissible</option>
+        <select class="fc" id="dCat" onchange="onCatChange()">
+          <optgroup label="─── Cotisations & Assurances ───">
+            <option value="Cotisations prof. (OPQ)|100">Cotisations prof. (OPQ)</option>
+            <option value="Assurances (Responsabilité)|100">Assurances (Responsabilité)</option>
+          </optgroup>
+          <optgroup label="─── Formation & Matériel ───">
+            <option value="Frais de formation / Congrès|100">Frais de formation / Congrès</option>
+            <option value="Fournitures de bureau / Tests|100">Fournitures de bureau / Tests</option>
+          </optgroup>
+          <optgroup label="─── Logiciels & Outils ───">
+            <option value="Logiciel gestion patients (ex: Jane, Psylio)|100">🖥️ Logiciel gestion patients (ex: Jane, Psylio)</option>
+            <option value="Abonnement logiciel professionnel|100">🖥️ Abonnement logiciel professionnel</option>
+          </optgroup>
+          <optgroup label="─── Télécommunications ───">
+            <option value="Téléphone cellulaire|mixed">📱 Téléphone cellulaire (usage mixte)</option>
+            <option value="Internet résidentiel|mixed">🌐 Internet résidentiel (usage mixte)</option>
+          </optgroup>
+          <optgroup label="─── Bureau à domicile ───">
+            <option value="Bureau à domicile — Loyer seul|mixed">🏠 Loyer (appartement / maison)</option>
+            <option value="Bureau à domicile — Services groupés (Loyer+Élec+Hydro)|mixed">🏠 Services groupés (Loyer + Élec. + Hydro-Québec)</option>
+            <option value="Bureau à domicile — Électricité (Hydro-Québec)|mixed">⚡ Électricité / Hydro-Québec (seul)</option>
+            <option value="Bureau à domicile — Chauffage|mixed">🔥 Chauffage</option>
+          </optgroup>
+          <optgroup label="─── Déplacements & Repas ───">
+            <option value="Frais de représentation (Repas)|50">🍽️ Repas d'affaires (50% max selon Revenu Québec)</option>
+            <option value="Frais de véhicule (Déplacements)|mixed">🚗 Frais de véhicule (usage mixte)</option>
+          </optgroup>
+          <optgroup label="─── Autre ───">
+            <option value="Autre dépense admissible|100">Autre dépense admissible</option>
+          </optgroup>
         </select>
       </div>
+
+      <!-- Montant total payé -->
       <div class="fg">
-        <label class="fl">Montant ($ CAD)</label>
-        <input type="number" class="fc" id="dAmount" min="0" step="0.01" placeholder="Ex: 85.50">
+        <label class="fl">Montant total payé ($ CAD)</label>
+        <input type="number" class="fc" id="dAmount" min="0" step="0.01" placeholder="Ex: 85.50" oninput="updateDepPreview()">
       </div>
+
+      <!-- Sélecteur % déduction (visible si usage mixte) -->
+      <div class="fg" id="pctDeductionGroup" style="display:none;">
+        <label class="fl">% usage professionnel à déduire</label>
+        <select class="fc" id="dPctDeduction" onchange="updateDepPreview()">
+          <option value="10">10% — Usage pro minimal</option>
+          <option value="20">20%</option>
+          <option value="25">25%</option>
+          <option value="30">30% — Usage pro modéré</option>
+          <option value="33">33%</option>
+          <option value="40">40%</option>
+          <option value="50">50% — Moitié-moitié</option>
+          <option value="60">60%</option>
+          <option value="70">70% — Usage pro élevé</option>
+          <option value="75">75%</option>
+          <option value="80">80%</option>
+          <option value="90">90%</option>
+          <option value="100">100% — Exclusivement professionnel</option>
+        </select>
+
+        <!-- Aperçu de la déduction calculée -->
+        <div class="dep-deduction-box" id="depDeductionBox">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">📊 Aperçu de la déduction</div>
+          <div class="dep-deduction-row">
+            <span class="lbl">Montant total payé</span>
+            <span class="val" id="ddTotal">—</span>
+          </div>
+          <div class="dep-deduction-row">
+            <span class="lbl">Portion non déductible</span>
+            <span class="val val-gray" id="ddNonDed">—</span>
+          </div>
+          <div class="dep-deduction-row" style="border-top:1px solid #bbf7d0;margin-top:4px;padding-top:8px">
+            <span class="lbl" style="font-weight:600">✅ Montant déductible</span>
+            <span class="val val-green" id="ddDed">—</span>
+          </div>
+          <div class="dep-deduction-row" style="border-top:none;margin-top:2px;padding-top:0">
+            <span class="lbl" style="color:var(--text3);font-size:12px">Économie d'impôt estimée (~36%)</span>
+            <span style="color:#6b7280;font-size:12px;font-weight:600" id="ddEco">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note sur les repas (fixe à 50%) -->
+      <div id="repasNote" style="display:none;">
+        <div class="alert alert-warning" style="margin-top:-8px;margin-bottom:14px">
+          🍽️ <strong>Repas d'affaires :</strong> Revenu Québec limite la déduction à <strong>50%</strong> du montant. Le montant déductible est calculé automatiquement.
+        </div>
+      </div>
+
       <div class="fg">
         <label class="fl">Description (Optionnel)</label>
-        <input type="text" class="fc" id="dNotes" placeholder="Ex: Renouvellement OPQ">
+        <input type="text" class="fc" id="dNotes" placeholder="Ex: Renouvellement OPQ, Facture Rogers mars...">
       </div>
+
       <button class="btn btn-primary btn-full" onclick="saveDepense()">💾 Ajouter la dépense</button>
     </div>
 
+    <!-- ─── LISTE DES DÉPENSES ─── -->
     <div class="card">
       <div class="flex aic jsb mb16">
         <div class="card-title" style="margin:0">Dépenses de l'année</div>
@@ -377,6 +521,9 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE : CLIENTS
+═══════════════════════════════════════════ -->
 <div class="page" id="page-clients">
   <div class="flex jsb aic mb20">
     <div>
@@ -398,6 +545,9 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE : RÉSUMÉ
+═══════════════════════════════════════════ -->
 <div class="page" id="page-resume">
   <div class="flex jsb aic mb20">
     <h2 class="serif" style="font-size:23px">📊 Tableau de bord fiscal</h2>
@@ -415,7 +565,7 @@ tbody td { padding: 11px 15px; }
   </div>
 
   <div class="alert alert-info">
-    💡 <strong>Note Fiscale:</strong> Les impôts sont calculés sur votre <strong>Revenu Imposable</strong> (Revenu Net Clinique - Dépenses Pro). Ajouter des dépenses réduit directement le montant d'impôts à payer.
+    💡 <strong>Note Fiscale:</strong> Les impôts sont calculés sur votre <strong>Revenu Imposable</strong> (Revenu Net Clinique - Dépenses Pro déductibles). Ajouter des dépenses réduit directement le montant d'impôts à payer.
   </div>
 
   <div class="g2">
@@ -432,6 +582,9 @@ tbody td { padding: 11px 15px; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE : AIDE & GUIDES
+═══════════════════════════════════════════ -->
 <div class="page" id="page-aide">
   
   <div class="card aide-sec mb20">
@@ -446,13 +599,12 @@ tbody td { padding: 11px 15px; }
       <li><strong>Facturation :</strong> Le pourcentage retenu par la clinique (par défaut <strong>30%</strong>).</li>
     </ul>
 
-    <h4>2. Utilisation des onglets principaux</h4>
+    <h4>2. Onglet Dépenses — Nouveautés</h4>
     <ul>
-      <li><strong>📋 Nouvelle Session :</strong> Enregistrez chaque consultation. L'application calcule automatiquement la part de la clinique et votre revenu net.</li>
-      <li><strong>👥 Clients :</strong> Votre base de données de patients.</li>
-      <li><strong>💳 Dépenses :</strong> Le registre de vos dépenses professionnelles. Essentiel pour payer moins d'impôts.</li>
-      <li><strong>🧾 Facture :</strong> Génère automatiquement la facture mensuelle pour la clinique. <strong>Confidentialité (Loi 25) :</strong> La facture exportée n'affiche que l'initiale du nom et le prénom. <strong>Épargne :</strong> La colonne jaune vous indique le montant exact à mettre de côté pour vos impôts (minimum garanti de 35%).</li>
-      <li><strong>📊 Résumé :</strong> Votre tableau de bord financier annuel montrant votre revenu net, vos dépenses, l'estimation de vos impôts et l'argent qu'il vous reste réellement "Dans vos poches".</li>
+      <li><strong>Catégories détaillées :</strong> L'Internet résidentiel et le cellulaire sont maintenant des catégories séparées. Les logiciels de gestion de patients (Jane, Psylio, etc.) ont leur propre catégorie à 100% déductible.</li>
+      <li><strong>Services groupés :</strong> Si vous payez un seul montant couvrant loyer + électricité + Hydro-Québec, utilisez "Services groupés". Entrez le montant total et choisissez le % pro.</li>
+      <li><strong>Sélecteur de % :</strong> Pour les dépenses à usage mixte (cellulaire, Internet, loyer, véhicule), un menu déroulant vous permet de choisir précisément le pourcentage professionnel. L'app calcule automatiquement le montant déductible.</li>
+      <li><strong>Repas d'affaires :</strong> Limité à 50% selon Revenu Québec — ce plafond est appliqué automatiquement.</li>
     </ul>
   </div>
 
@@ -466,14 +618,14 @@ tbody td { padding: 11px 15px; }
     <h4>Exemples pratiques : Comment saisir vos dépenses</h4>
     
     <p><strong>1. Dépenses à 100% (Usage exclusivement professionnel)</strong><br>
-    <em>Exemple : Frais de l'OPQ ($950).</em> Vous inscrivez <strong>$950</strong> dans l'application. Économie d'impôt réelle : environ $342.</p>
+    <em>Exemple : Frais de l'OPQ ($950) ou logiciel Jane App ($80/mois).</em> Vous inscrivez le montant total. Économie d'impôt réelle : environ $342 / $29 par mois.</p>
 
     <p><strong>2. Dépenses mixtes (Usage professionnel et personnel)</strong><br>
-    Vous ne pouvez déduire que la portion professionnelle. Vous devez calculer ce pourcentage <strong>avant</strong> d'entrer le montant dans l'application.</p>
+    Choisissez la catégorie et utilisez le sélecteur de %. L'app calcule le montant déductible automatiquement.</p>
     <ul>
-      <li><strong>Téléphone cellulaire :</strong> Facture de $50. Usage pro estimé à 50%. Entrez <strong>$25</strong> dans l'application.</li>
-      <li><strong>Internet résidentiel :</strong> Facture de $80. Usage pro (téléthérapie, notes) estimé à 30%. Entrez <strong>$24</strong> dans l'application.</li>
-      <li><strong>Bureau à domicile (Loyer "Tout inclus") :</strong> Loyer de $1,700/mois. Si votre bureau exclusif représente 10% de la superficie totale de votre appartement, entrez <strong>$170</strong> par mois.</li>
+      <li><strong>Téléphone cellulaire :</strong> Facture de $50. Usage pro estimé à 50% → Déductible : $25.</li>
+      <li><strong>Internet résidentiel :</strong> Facture de $80. Usage pro (téléthérapie, notes) estimé à 30% → Déductible : $24.</li>
+      <li><strong>Services groupés (Loyer+Élec+Hydro) :</strong> $2,200/mois tout compris. Bureau = 10% superficie. Choisissez 10% → Déductible : $220/mois.</li>
     </ul>
   </div>
 
@@ -491,69 +643,26 @@ tbody td { padding: 11px 15px; }
     <h4>Étape 2 : Ajouter le "cerveau" (Apps Script)</h4>
     <ul>
       <li>Dans le menu en haut, cliquez sur <strong>Extensions &gt; Apps Script</strong>.</li>
-      <li>Effacez le code présent et copiez/collez celui-ci :</li>
+      <li>Effacez le code présent et copiez/collez celui de la version précédente.</li>
     </ul>
-    
-<pre><code>function doGet(e) {
-  var action = e.parameter.action;
-  var dataStr = e.parameter.data;
-  var data = dataStr ? JSON.parse(dataStr) : {};
-
-  if (action === 'ping') return ContentService.createTextOutput(JSON.stringify({status: 'ok'})).setMimeType(ContentService.MimeType.JSON);
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  if (action === 'getClients') {
-    return ContentService.createTextOutput(JSON.stringify({data: getSheetData(ss.getSheetByName("Clients"))})).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (action === 'getSessions') {
-    return ContentService.createTextOutput(JSON.stringify({data: getSheetData(ss.getSheetByName("Sessions"))})).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (action === 'addClient') {
-    var sheet = ss.getSheetByName("Clients");
-    var id = new Date().getTime().toString();
-    sheet.appendRow([id, data.Prénom, data.Nom, data.Téléphone, data.Date_Naissance, data.Date_Appel, data.Sexe, data.Actif]);
-    return ContentService.createTextOutput(JSON.stringify({id: id})).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (action === 'addSession') {
-    var sheet = ss.getSheetByName("Sessions");
-    var id = 's' + new Date().getTime().toString();
-    sheet.appendRow([id, data.Date_Session, data.Client, data.ClientId, data.Tarif, data.Frais, data.Net, data.Mois, data.Facture, data.Notes]);
-    return ContentService.createTextOutput(JSON.stringify({id: id})).setMimeType(ContentService.MimeType.JSON);
-  }
-  return ContentService.createTextOutput(JSON.stringify({error: "Action inconnue"})).setMimeType(ContentService.MimeType.JSON);
-}
-
-function getSheetData(sheet) {
-  if (!sheet) return [];
-  var data = sheet.getDataRange().getValues();
-  if (data.length <= 1) return [];
-  var headers = data[0], result = [];
-  for (var i = 1; i < data.length; i++) {
-    var row = data[i], obj = {};
-    for (var j = 0; j < headers.length; j++) obj[headers[j]] = row[j];
-    result.push(obj);
-  }
-  return result;
-}</code></pre>
 
     <h4>Étape 3 : Déployer et obtenir votre lien secret</h4>
     <ul>
       <li>Cliquez sur 💾 pour sauvegarder.</li>
-      <li>Cliquez sur le bouton bleu <strong>Déployer</strong> (Deploy) &gt; <strong>Nouveau déploiement</strong>.</li>
-      <li>Type : <strong>Application Web</strong> (Web app).</li>
-      <li>Description : <em>Connexion App</em> | Exécuter en tant que : <em>Moi</em> | Qui a accès : <strong>Tous les utilisateurs (Anyone)</strong>.</li>
-      <li>Cliquez sur <strong>Déployer</strong> et autorisez l'accès (cliquez sur Paramètres avancés si Google affiche un avertissement).</li>
-      <li>Copiez l'URL longue générée.</li>
+      <li>Cliquez sur <strong>Déployer</strong> &gt; <strong>Nouveau déploiement</strong> &gt; Type : <strong>Application Web</strong>.</li>
+      <li>Exécuter en tant que : <em>Moi</em> | Qui a accès : <strong>Tous les utilisateurs</strong>.</li>
+      <li>Copiez l'URL longue générée et collez-la dans <strong>⚙️ Config</strong>.</li>
     </ul>
-
-    <h4>Étape 4 : Lier à votre application</h4>
-    <p>Ouvrez votre application clinique, cliquez sur <strong>⚙️ Config</strong> en haut à droite, collez l'URL dans la section Google Sheets, et cliquez sur <em>Tester la connexion Google</em>.</p>
   </div>
 
 </div>
 
-</div><div class="mbg" id="cfgModal">
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL : CONFIG
+═══════════════════════════════════════════ -->
+<div class="mbg" id="cfgModal">
 <div class="modal">
   <div class="modal-title">⚙️ Configuration</div>
 
@@ -602,6 +711,9 @@ function getSheetData(sheet) {
 </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     MODAL : NOUVEAU CLIENT
+═══════════════════════════════════════════ -->
 <div class="mbg" id="addClientModal">
 <div class="modal">
   <div class="modal-title">+ Nouveau client</div>
@@ -630,7 +742,7 @@ function getSheetData(sheet) {
 </div>
 </div>
 
-<div id="toast"></div>
+<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:white;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s,opacity .3s;opacity:0;z-index:999;white-space:nowrap;pointer-events:none"></div>
 
 <script>
 // ════════════════════════════
@@ -653,8 +765,10 @@ const DEMO_SESSIONS = [
   {id:'s1', Date_Session:today, Client:'Mathieu Guitor', ClientId:'1', Tarif:150, Frais:45, Net:105, Mois:`${MOIS[new Date().getMonth()]} ${new Date().getFullYear()}`, Facture:`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getFullYear()).slice(-2)}`, Notes:''}
 ];
 const DEMO_DEPENSES = [
-  {id:'d1', date:'2026-03-05', category:'Cotisations prof. (OPQ)', amount: 650.00, notes:'Renouvellement annuel'},
-  {id:'d2', date:'2026-04-10', category:'Assurances (Responsabilité)', amount: 150.00, notes:'Prime annuelle'}
+  {id:'d1', date:'2026-03-05', category:'Cotisations prof. (OPQ)', pctDed:100, amountTotal:650.00, amountDed:650.00, notes:'Renouvellement annuel'},
+  {id:'d2', date:'2026-04-10', category:'Assurances (Responsabilité)', pctDed:100, amountTotal:150.00, amountDed:150.00, notes:'Prime annuelle'},
+  {id:'d3', date:'2026-04-01', category:'Logiciel gestion patients (ex: Jane, Psylio)', pctDed:100, amountTotal:80.00, amountDed:80.00, notes:'Abonnement Jane App - avril'},
+  {id:'d4', date:'2026-04-01', category:'Internet résidentiel', pctDed:30, amountTotal:80.00, amountDed:24.00, notes:'Vidéotron - avril'},
 ];
 
 // ════════════════════════════
@@ -701,10 +815,10 @@ function fillSelectors() {
 //  FISCALITÉ (QUÉBEC 2026)
 // ════════════════════════════
 const TAX_BRACKETS_2026 = [
-  { max: 16452, rate: 0.0000 },
-  { max: 18952, rate: 0.1169 },
-  { max: 54345, rate: 0.2569 },
-  { max: 58523, rate: 0.3069 },
+  { max: 16452,  rate: 0.0000 },
+  { max: 18952,  rate: 0.1169 },
+  { max: 54345,  rate: 0.2569 },
+  { max: 58523,  rate: 0.3069 },
   { max: 108680, rate: 0.3612 },
   { max: 117045, rate: 0.4112 },
   { max: 132245, rate: 0.4571 },
@@ -743,24 +857,114 @@ function estimarCotizaciones(ingresoImponible) {
 }
 
 // ════════════════════════════
-//  DÉPENSES (SAUVEGARDE LOCALE)
+//  DÉPENSES — LOGIQUE AMÉLIORÉE
 // ════════════════════════════
+
+/**
+ * Retourne le type de déduction pour une valeur de catégorie :
+ *  '100'   → 100% déductible, pas de sélecteur
+ *  '50'    → 50% fixe (repas), pas de sélecteur
+ *  'mixed' → sélecteur % visible
+ */
+function getCatType(catValue) {
+  const parts = catValue.split('|');
+  return parts.length > 1 ? parts[1] : '100';
+}
+function getCatLabel(catValue) {
+  return catValue.split('|')[0];
+}
+
+function onCatChange() {
+  const rawVal = document.getElementById('dCat').value;
+  const type = getCatType(rawVal);
+  const pctGroup = document.getElementById('pctDeductionGroup');
+  const repasNote = document.getElementById('repasNote');
+
+  pctGroup.style.display = 'none';
+  repasNote.style.display = 'none';
+
+  if (type === 'mixed') {
+    pctGroup.style.display = '';
+    // Défaut intelligent selon la catégorie
+    const label = getCatLabel(rawVal).toLowerCase();
+    const sel = document.getElementById('dPctDeduction');
+    if (label.includes('cellulaire') || label.includes('téléphone')) sel.value = '50';
+    else if (label.includes('internet')) sel.value = '30';
+    else if (label.includes('loyer') || label.includes('services groupés') || label.includes('électricité') || label.includes('chauffage')) sel.value = '10';
+    else if (label.includes('véhicule')) sel.value = '50';
+    else sel.value = '50';
+  } else if (type === '50') {
+    repasNote.style.display = '';
+  }
+  updateDepPreview();
+}
+
+function updateDepPreview() {
+  const rawVal = document.getElementById('dCat').value;
+  const type = getCatType(rawVal);
+  const total = parseFloat(document.getElementById('dAmount').value) || 0;
+  const box = document.getElementById('depDeductionBox');
+
+  if (type !== 'mixed' || total <= 0) {
+    box.classList.remove('visible');
+    return;
+  }
+
+  const pct = parseInt(document.getElementById('dPctDeduction').value) || 0;
+  const ded = round2(total * pct / 100);
+  const nonDed = round2(total - ded);
+  const eco = round2(ded * 0.36); // TMI estimé 36%
+
+  document.getElementById('ddTotal').textContent = `$${total.toFixed(2)}`;
+  document.getElementById('ddNonDed').textContent = nonDed > 0 ? `-$${nonDed.toFixed(2)}` : '$0.00';
+  document.getElementById('ddDed').textContent = `$${ded.toFixed(2)}`;
+  document.getElementById('ddEco').textContent = `≈ $${eco.toFixed(2)} récupérés`;
+
+  box.classList.add('visible');
+}
+
 function saveDepense() {
   const date = v('dDate');
-  const cat = v('dCat');
-  const amt = parseFloat(v('dAmount'));
+  const rawCat = document.getElementById('dCat').value;
+  const catLabel = getCatLabel(rawCat);
+  const catType = getCatType(rawCat);
+  const totalAmt = parseFloat(v('dAmount'));
   const notes = v('dNotes');
 
-  if (!date || !amt || amt <= 0) { toast('⚠️ Montant et date requis', 'warning'); return; }
+  if (!date || !totalAmt || totalAmt <= 0) { toast('⚠️ Montant et date requis', 'warning'); return; }
 
-  const dep = { id: 'd'+Date.now(), date: date, category: cat, amount: amt, notes: notes };
+  let pctDed = 100;
+  let amountDed = totalAmt;
+
+  if (catType === 'mixed') {
+    pctDed = parseInt(document.getElementById('dPctDeduction').value) || 100;
+    amountDed = round2(totalAmt * pctDed / 100);
+  } else if (catType === '50') {
+    pctDed = 50;
+    amountDed = round2(totalAmt * 0.5);
+  }
+
+  const dep = {
+    id: 'd' + Date.now(),
+    date,
+    category: catLabel,
+    pctDed,
+    amountTotal: totalAmt,
+    amountDed,
+    notes
+  };
+
   depenses.push(dep);
-  
   localStorage.setItem('clinique360_depenses', JSON.stringify(depenses));
   
-  toast('✅ Dépense enregistrée');
+  const msg = pctDed < 100
+    ? `✅ Dépense enregistrée — $${amountDed.toFixed(2)} déductibles (${pctDed}% de $${totalAmt.toFixed(2)})`
+    : `✅ Dépense enregistrée — $${amountDed.toFixed(2)} déductibles`;
+  toast(msg);
+
   document.getElementById('dAmount').value = '';
   document.getElementById('dNotes').value = '';
+  document.getElementById('depDeductionBox').classList.remove('visible');
   renderDepenses();
 }
 
@@ -775,22 +979,38 @@ function renderDepenses() {
     return;
   }
 
-  const total = expYear.reduce((a,e) => a + e.amount, 0);
+  // Totaux : utilise amountDed (montant déductible réel)
+  const totalDed = expYear.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
+  const totalBrut = expYear.reduce((a,e) => a + (e.amountTotal ?? e.amount ?? 0), 0);
 
   el.innerHTML = `<div class="tw"><table>
-    <thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Montant</th><th>Action</th></tr></thead>
-    <tbody>${expYear.map(e=>`<tr>
-      <td>${fmtDate(e.date)}</td>
-      <td><span class="badge badge-purple">${e.category}</span></td>
-      <td>${e.notes || '—'}</td>
-      <td class="fw6">$${e.amount.toFixed(2)}</td>
-      <td><button class="btn btn-danger" onclick="deleteDepense('${e.id}')">X</button></td>
-    </tr>`).join('')}</tbody>
+    <thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Payé</th><th>% Pro</th><th>Déductible</th><th></th></tr></thead>
+    <tbody>${expYear.map(e => {
+      const pct = e.pctDed ?? 100;
+      const amtTotal = e.amountTotal ?? e.amount ?? 0;
+      const amtDed = e.amountDed ?? amtTotal;
+      const pillClass = pct === 100 ? 'pct-pill pct-pill-100' : 'pct-pill';
+      return `<tr>
+        <td>${fmtDate(e.date)}</td>
+        <td><span class="badge badge-purple" style="white-space:normal;max-width:180px;display:inline-block;line-height:1.4">${e.category}</span></td>
+        <td>${e.notes || '—'}</td>
+        <td class="fw6">$${amtTotal.toFixed(2)}</td>
+        <td><span class="${pillClass}">${pct}%</span></td>
+        <td class="fw6 c-green">$${amtDed.toFixed(2)}</td>
+        <td><button class="btn btn-danger" onclick="deleteDepense('${e.id}')">✕</button></td>
+      </tr>`;
+    }).join('')}</tbody>
     <tfoot><tr>
-      <td class="tfoot" colspan="3">TOTAL DÉDUCTIONS (${y})</td>
-      <td class="tfoot c-red" colspan="2">$${total.toFixed(2)}</td>
+      <td class="tfoot" colspan="3">TOTAL ${y}</td>
+      <td class="tfoot">$${totalBrut.toFixed(2)}</td>
+      <td class="tfoot"></td>
+      <td class="tfoot c-green">$${totalDed.toFixed(2)}</td>
+      <td class="tfoot"></td>
     </tr></tfoot>
-  </table></div>`;
+  </table></div>
+  <div class="alert alert-success" style="margin-top:12px">
+    💰 <strong>Économie d'impôt estimée :</strong> ≈ $${(totalDed * 0.36).toFixed(0)} (basé sur TMI ~36%)
+  </div>`;
 }
 
 function deleteDepense(id) {
@@ -1151,11 +1371,11 @@ function loadResume() {
   const sessMois = sessions.filter(s => s.Mois === moisStr);
   const sessAnnee = sessions.filter(s => s.Mois && s.Mois.includes(String(y)));
 
-  const netMoisClinique = sessMois.reduce((a,s) => a + s.Net, 0);
   const netAnnuelClinique = sessAnnee.reduce((a,s) => a + s.Net, 0);
 
+  // Utilise amountDed (montant déductible réel)
   const expAnnee = depenses.filter(e => e.date && e.date.startsWith(String(y)));
-  const totalDepenses = expAnnee.reduce((a,e) => a + e.amount, 0);
+  const totalDepenses = expAnnee.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
 
   const revenuImposable = Math.max(0, netAnnuelClinique - totalDepenses);
   const impotEstime = estimarImpuestos(revenuImposable);
@@ -1169,7 +1389,6 @@ function loadResume() {
   document.getElementById('stTaxes').textContent = totalTaxes > 0 ? `-$${totalTaxes.toFixed(0)}` : '—';
   document.getElementById('stReal').textContent = revenuReel > 0 ? `$${revenuReel.toFixed(0)}` : '—';
 
-  // Top clients
   const freq={};
   sessMois.forEach(s=>{freq[s.Client]=(freq[s.Client]||0)+1;});
   const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -1184,7 +1403,6 @@ function loadResume() {
         </div>`).join('')
     : '<div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée ce mois</div></div>';
 
-  // Tarif breakdown
   const tarifs={};
   sessMois.forEach(s=>{tarifs[`$${s.Tarif}`]=(tarifs[`$${s.Tarif}`]||0)+1;});
   const te=Object.entries(tarifs).sort();
@@ -1195,7 +1413,7 @@ function loadResume() {
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
             <span>Tarif ${t}</span><span><strong>${c}</strong> sess. (${pct2}%)</span>
           </div>
-          <div class="prog-wrap"><div class="prog-bar" style="width:${pct2}%"></div></div>
+          <div style="background:var(--border);border-radius:99px;height:8px"><div style="background:var(--accent);border-radius:99px;height:8px;width:${pct2}%;transition:width .4s"></div></div>
         </div>`;
       }).join('')
     : '<div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée ce mois</div></div>';
@@ -1211,7 +1429,7 @@ function loadFacture() {
   const netAnnuelClinique = sessAnnee.reduce((a,s) => a + s.Net, 0);
   
   const expAnnee = depenses.filter(e => e.date && e.date.startsWith(String(y)));
-  const totalDepenses = expAnnee.reduce((a,e) => a + e.amount, 0);
+  const totalDepenses = expAnnee.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
 
   const revenuImposable = Math.max(0, netAnnuelClinique - totalDepenses);
   const taxesTotales = estimarImpuestos(revenuImposable) + estimarCotizaciones(revenuImposable);
@@ -1417,9 +1635,9 @@ function toast(msg,type='success'){
   const el=document.getElementById('toast');
   el.textContent=msg;
   el.style.background=type==='error'?'var(--danger)':type==='warning'?'var(--warning)':'var(--accent)';
-  el.style.transform='translateY(0)'; el.style.opacity='1';
+  el.style.transform='translateX(-50%) translateY(0)'; el.style.opacity='1';
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{el.style.transform='translateY(80px)';el.style.opacity='0';},3000);
+  toastTimer=setTimeout(()=>{el.style.transform='translateX(-50%) translateY(80px)';el.style.opacity='0';},3500);
 }
 </script>
 </body>
