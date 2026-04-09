@@ -698,6 +698,24 @@ tbody td { padding: 11px 15px; }
     return json({id: id});
   }
 
+  if (action === 'deleteClient') {
+    var sheet = ss.getSheetByName("Clients");
+    var rows = sheet.getDataRange().getValues();
+    // Try match by id first (col A), then by Prénom+Nom (col B+C) if id is empty
+    for (var i = 1; i < rows.length; i++) {
+      var rowId = String(rows[i][0]).trim();
+      var cleanId = String(data.id).replace('_row_','').trim();
+      // Match by _row_ index
+      if (data.id && String(data.id).startsWith('_row_')) {
+        var rowIndex = parseInt(data.id.replace('_row_',''));
+        if (i - 1 === rowIndex) { sheet.deleteRow(i + 1); return json({deleted: true}); }
+      } else if (rowId !== '' && rowId === String(data.id)) {
+        sheet.deleteRow(i + 1); return json({deleted: true});
+      }
+    }
+    return json({deleted: false, error: 'Not found'});
+  }
+
   if (action === 'deleteDepense') {
     var sheet = ss.getSheetByName("Depenses");
     var rows = sheet.getDataRange().getValues();
@@ -1227,9 +1245,15 @@ async function syncData() {
 
   try {
     const c = await callScript('getClients');
-    clients = c.data || [];
+    clients = (c.data || []).map((row, i) => {
+      if (!row.id || String(row.id).trim() === '') row.id = '_row_' + i;
+      return row;
+    });
     const s = await callScript('getSessions');
-    sessions = s.data || [];
+    sessions = (s.data || []).map((row, i) => {
+      if (!row.id || String(row.id).trim() === '') row.id = '_srow_' + i;
+      return row;
+    });
     const d = await callScript('getDepenses');
     depenses = (d.data || []).map(e => ({
       ...e,
@@ -1505,13 +1529,25 @@ async function saveNewClient() {
   } catch(e){toast('❌ '+e.message,'error');}
 }
 
-function confirmDeleteClient(id, name) {
+async function confirmDeleteClient(id, name) {
   if (!confirm(`Supprimer le client "${name}" ?\n\nSes sessions enregistrées ne seront pas supprimées.`)) return;
-  clients = clients.filter(c => String(c.id) !== String(id));
-  renderClientDropdown();
-  renderClientTable();
-  updateClientCount();
-  toast(`🗑️ Client "${name}" supprimé`);
+  try {
+    if (!isDemo && cfg.scriptUrl) {
+      await callScript('deleteClient', { id });
+    }
+    clients = clients.filter(c => String(c.id) !== String(id));
+    renderClientDropdown();
+    renderClientTable();
+    updateClientCount();
+    toast(`🗑️ Client "${name}" supprimé`);
+  } catch(e) {
+    // Even if Sheets delete fails, remove from local memory
+    clients = clients.filter(c => String(c.id) !== String(id));
+    renderClientDropdown();
+    renderClientTable();
+    updateClientCount();
+    toast(`🗑️ Client "${name}" supprimé (sync manuelle recommandée)`);
+  }
 }
 
 // ════════════════════════════
