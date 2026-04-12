@@ -1778,10 +1778,27 @@ function exportFacture() {
 }
 
 function getConfidentialName(clientId, fallbackName) {
-  const c = clients.find(x => String(x.id) === String(clientId));
-  if (c && c.Nom && c.Prénom) return `${c.Nom.charAt(0).toUpperCase()}. ${c.Prénom}`;
-  const parts = fallbackName.split(' ');
-  return parts.length > 1 ? `${parts.pop().charAt(0).toUpperCase()}. ${parts.join(' ')}` : fallbackName;
+  // Buscar el cliente por ID (forzando comparación como string)
+  const c = clients.find(x =>
+    String(x.id).trim() === String(clientId).trim() ||
+    String(x.id) === String(clientId)
+  );
+
+  if (c && c.Nom && c.Prénom) {
+    // Formato: inicial APELLIDO en mayúscula + punto + PRÉNOM completo
+    // Resultado: "B. Gabriel", "R. Pascale", "H. Marie-Ann"
+    return c.Nom.charAt(0).toUpperCase() + '. ' + c.Prénom;
+  }
+
+  // Fallback si no se encontró el cliente por ID
+  // El nombre guardado en Sheets es "Prénom Nom" (ej: "Marie-Ann Baron")
+  const parts = fallbackName.trim().split(' ');
+  if (parts.length >= 2) {
+    const apellido = parts[parts.length - 1]; // último elemento = Nom
+    const prenom = parts.slice(0, parts.length - 1).join(' '); // resto = Prénom
+    return apellido.charAt(0).toUpperCase() + '. ' + prenom;
+  }
+  return fallbackName;
 }
 
 // ════════════════════════════
