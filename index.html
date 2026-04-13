@@ -291,17 +291,7 @@ tbody td { padding: 11px 15px; }
           <div class="card-title" style="margin:0" id="todayCardTitle">Sessions d'aujourd'hui</div>
           <span class="badge badge-gold" id="todayCount">0 session(s)</span>
         </div>
-        <!-- Sélecteur de date pour voir les sessions d'un jour précis -->
-        <div class="flex aic gap8 mb16" style="flex-wrap:wrap">
-          <input type="date" class="fc" id="viewDate" style="flex:1;min-width:140px"
-            onchange="document.getElementById('sDate').value=this.value;loadTodaySessions()">
-          <button class="btn btn-secondary btn-sm" onclick="
-            var t=new Date();
-            var d=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
-            document.getElementById('viewDate').value=d;
-            document.getElementById('sDate').value=d;
-            loadTodaySessions();">Aujourd'hui</button>
-        </div>
+
         <div id="todayList">
           <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>
         </div>
@@ -587,8 +577,7 @@ window.onload = () => {
   loadCfg();
   fillSelectors();
   document.getElementById('sDate').value = today;
-  var vd = document.getElementById('viewDate');
-  if(vd) vd.value = today;
+
   document.getElementById('dDate').value = today;
   updatePreview();
   setTarif(150);
@@ -1240,9 +1229,23 @@ function v(id){return document.getElementById(id).value.trim();}
 function round2(n){return Math.round(n*100)/100;}
 function normalizeDate(d){
   if(!d) return '';
-  const s=String(d).trim();
-  const iso=s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  var s = String(d).trim();
+  // Already YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // Extract YYYY-MM-DD from any ISO or long date string
+  // Handles: "Wed Apr 01 2026 00:00:00 GMT-0300..."
+  // Handles: "2026-04-01T03:00:00.000Z"
+  var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
   if(iso) return iso[1]+'-'+iso[2]+'-'+iso[3];
+  // Handle "Mon Apr 01 2026..." - extract using month map
+  var longDate = s.match(/([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})/);
+  if(longDate){
+    var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+                Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+    var mo = months[longDate[1]] || '01';
+    var dy = longDate[2].padStart(2,'0');
+    return longDate[3]+'-'+mo+'-'+dy;
+  }
   return s;
 }
 function fmtDate(d){
