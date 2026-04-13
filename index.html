@@ -1286,6 +1286,174 @@ function toast(msg,type='success'){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>{el.style.transform='translateX(-50%) translateY(80px)';el.style.opacity='0';},3500);
 }
+
+// ════════════════════════════════════════════════════════
+//  EDIT & DELETE SESSION
+// ════════════════════════════════════════════════════════
+let editingSessionDate = null;
+let editingSessionIdx  = -1;
+
+function editSession(i) {
+  const selDate = document.getElementById('sDate').value || today;
+  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
+  const s = todaySess[i];
+  if (!s) return;
+
+  editingSessionDate = selDate;
+  editingSessionIdx  = i;
+
+  document.getElementById('editDate').value = normalizeDate(s.Date_Session);
+  document.getElementById('editClientName').value = (s.Prénom||'') + ' ' + (s.Nom||'');
+  document.getElementById('editTarif').value = s.Tarif;
+  document.getElementById('editNotes').value = s.Notes || '';
+  document.getElementById('editPctLbl').textContent = cfg.pct || 30;
+
+  // Highlight tarif button
+  unselectEditTarifBtns();
+  const t = Number(s.Tarif);
+  if (t===120) document.getElementById('et120').classList.add('active');
+  else if (t===140) document.getElementById('et140').classList.add('active');
+  else if (t===150) document.getElementById('et150').classList.add('active');
+  else document.getElementById('etOther').classList.add('active');
+
+  updateEditPreview();
+  document.getElementById('editSessionModal').classList.add('open');
+}
+
+function setEditTarif(val) {
+  unselectEditTarifBtns();
+  const map = {120:'et120', 140:'et140', 150:'et150'};
+  if (map[val]) document.getElementById(map[val]).classList.add('active');
+  else document.getElementById('etOther').classList.add('active');
+  if (val > 0) document.getElementById('editTarif').value = val;
+  updateEditPreview();
+}
+
+function unselectEditTarifBtns() {
+  ['et120','et140','et150','etOther'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+}
+
+function updateEditPreview() {
+  const t = parseFloat(document.getElementById('editTarif').value) || 0;
+  const p = cfg.pct || 30;
+  if (!t) {
+    document.getElementById('editFrais').textContent = '—';
+    document.getElementById('editNet').textContent = '—';
+    return;
+  }
+  const frais = round2(t * p / 100);
+  const net   = round2(t - frais);
+  document.getElementById('editFrais').textContent = '-$' + frais.toFixed(2);
+  document.getElementById('editNet').textContent   = '$'  + net.toFixed(2);
+}
+
+async function saveEditSession() {
+  const newDate  = document.getElementById('editDate').value;
+  const newTarif = parseFloat(document.getElementById('editTarif').value);
+  const newNotes = document.getElementById('editNotes').value.trim();
+
+  if (!newDate || !newTarif) { toast('⚠️ Date et tarif requis', 'warning'); return; }
+
+  const selDate  = editingSessionDate;
+  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
+  const s = todaySess[editingSessionIdx];
+  if (!s) { toast('❌ Session introuvable', 'error'); return; }
+
+  // Find in main sessions array
+  const mainIdx = sessions.findIndex(ms =>
+    normalizeDate(ms.Date_Session) === selDate &&
+    ms.Prénom === s.Prénom &&
+    ms.Nom    === s.Nom &&
+    String(ms.Tarif) === String(s.Tarif)
+  );
+  if (mainIdx < 0) { toast('❌ Session introuvable', 'error'); return; }
+
+  const p      = cfg.pct || 30;
+  const frais  = round2(newTarif * p / 100);
+  const net    = round2(newTarif - frais);
+  const parts  = newDate.split('-');
+  const dMonth = parseInt(parts[1]) - 1;
+  const mois   = MOIS[dMonth] + ' ' + parts[0];
+  const facture = String(dMonth+1).padStart(2,'0') + '-' + parts[0].slice(-2);
+
+  const updated = {
+    ...sessions[mainIdx],
+    Date_Session: newDate,
+    Tarif: newTarif,
+    Frais: frais,
+    Net: net,
+    Mois: mois,
+    Facture: facture,
+    Notes: newNotes
+  };
+
+  const btn = document.querySelector('#editSessionModal .btn-primary');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+
+  try {
+    if (isDemo || !cfg.scriptUrl) {
+      sessions[mainIdx] = updated;
+      toast('✅ Session modifiée (démo)');
+    } else {
+      // Delete old + add new in Sheets
+      await callScript('deleteSession', {
+        date:   normalizeDate(s.Date_Session),
+        prenom: s.Prénom,
+        nom:    s.Nom,
+        tarif:  String(s.Tarif)
+      });
+      await callScript('addSession', updated);
+      sessions[mainIdx] = updated;
+      toast('✅ Session modifiée dans Google Sheets');
+    }
+    closeModal('editSessionModal');
+    loadTodaySessions();
+  } catch(e) {
+    toast('❌ ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Sauvegarder'; }
+  }
+}
+
+async function deleteSession(i) {
+  const selDate   = document.getElementById('sDate').value || today;
+  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
+  const s = todaySess[i];
+  if (!s) return;
+
+  const name = (s.Prénom||'') + ' ' + (s.Nom||'');
+  if (!confirm('Supprimer la session de ' + name + ' ($' + s.Tarif + ') ?')) return;
+
+  const mainIdx = sessions.findIndex(ms =>
+    normalizeDate(ms.Date_Session) === selDate &&
+    ms.Prénom === s.Prénom &&
+    ms.Nom    === s.Nom &&
+    String(ms.Tarif) === String(s.Tarif)
+  );
+
+  try {
+    if (!isDemo && cfg.scriptUrl) {
+      await callScript('deleteSession', {
+        date:   normalizeDate(s.Date_Session),
+        prenom: s.Prénom,
+        nom:    s.Nom,
+        tarif:  String(s.Tarif)
+      });
+    }
+    if (mainIdx >= 0) sessions.splice(mainIdx, 1);
+    toast('🗑️ Session supprimée');
+    loadTodaySessions();
+  } catch(e) {
+    // Remove from memory even if Sheets fails
+    if (mainIdx >= 0) sessions.splice(mainIdx, 1);
+    loadTodaySessions();
+    toast('🗑️ Session supprimée (sync recommandée)');
+  }
+}
+
 </script>
 
 <!-- ══ MODAL: ÉDITER SESSION ══ -->
