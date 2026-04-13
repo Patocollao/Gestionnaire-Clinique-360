@@ -28,7 +28,17 @@
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
 /* HEADER */
-.header { background: var(--accent); color: white; padding: 0 32px; height: 62px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(45,106,79,0.35); }
+.header {
+  background: var(--accent);
+  color: white;
+  padding: 0 32px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(45,106,79,0.35);
+}
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 .brand-name { font-family: 'DM Serif Display', serif; font-size: 19px; letter-spacing: .01em; }
@@ -40,17 +50,27 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .hbtn-solid:hover { background: #f0faf5; }
 
 /* SETUP BANNER */
-#setupBanner { background: #fff8e1; border-bottom: 2px solid #f6c90e; padding: 11px 32px; font-size: 13px; color: #7a5900; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#setupBanner {
+  background: #fff8e1;
+  border-bottom: 2px solid #f6c90e;
+  padding: 11px 32px;
+  font-size: 13px;
+  color: #7a5900;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 #setupBanner a { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: underline; }
 
 /* TABS */
-.tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 2px; overflow-x: auto; }
+.tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 2px; }
 .tab { padding: 15px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 2.5px solid transparent; color: var(--text2); transition: all .18s; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
 .tab:hover { color: var(--accent); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
 /* MAIN */
-.main { padding: 26px 32px; max-width: 1080px; margin: 0 auto; }
+.main { padding: 26px 32px; max-width: 1080px; }
 .page { display: none; }
 .page.active { display: block; }
 
@@ -81,8 +101,6 @@ select.fc { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w
 .btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
 .btn-outline:hover { background: var(--accent-light); }
 .btn-sm { padding: 6px 13px; font-size: 12.5px; }
-.btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 4px 10px; font-size: 12px; }
-.btn-danger:hover { background: #fca5a5; }
 .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 .btn-full { width: 100%; justify-content: center; }
 
@@ -109,15 +127,13 @@ tbody td { padding: 11px 15px; }
 .badge-green { background: var(--accent-light); color: var(--accent); }
 .badge-gray { background: #f0f0f0; color: #777; }
 .badge-gold { background: #fff3cd; color: #856404; }
-.badge-purple { background: #f3e8ff; color: #6b21a8; }
-.badge-blue { background: #dbeafe; color: #1d4ed8; }
-.badge-orange { background: #ffedd5; color: #c2410c; }
 
 /* ALERT */
 .alert { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; }
 .alert-info { background: #e8f4fd; border: 1px solid #bee3f8; color: #2c5282; }
+.alert-success { background: var(--accent-light); border: 1px solid #b7e4c7; color: var(--accent); }
 .alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
-.alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+.alert-error { background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; }
 
 /* PREVIEW */
 .preview { background: var(--surface2); border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 18px; margin-top: 14px; }
@@ -144,9 +160,11 @@ tbody td { padding: 11px 15px; }
 .inv-title { font-family: 'DM Serif Display', serif; font-size: 17px; }
 .inv-body { padding: 16px 22px; display: grid; grid-template-columns: 1fr auto; gap: 18px; background: white; }
 
-/* SPINNER & EMPTY */
+/* SPINNER */
 .spin { width: 17px; height: 17px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: rot .65s linear infinite; display: inline-block; }
 @keyframes rot { to { transform: rotate(360deg); } }
+
+/* EMPTY */
 .empty { text-align: center; padding: 50px 20px; color: var(--text3); }
 .empty-ico { font-size: 44px; margin-bottom: 10px; opacity: .45; }
 .empty-title { font-size: 15px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
@@ -157,92 +175,34 @@ tbody td { padding: 11px 15px; }
 .si { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 13px; pointer-events: none; }
 
 /* UTILS */
+.sep { height: 1px; background: var(--border); margin: 20px 0; }
 .flex { display: flex; } .aic { align-items: center; } .jsb { justify-content: space-between; }
-.gap8 { gap: 8px; } .mb16 { margin-bottom: 16px; } .mb20 { margin-bottom: 20px; } .mt12 { margin-top: 12px; }
+.gap8 { gap: 8px; } .gap12 { gap: 12px; }
+.mb16 { margin-bottom: 16px; } .mb20 { margin-bottom: 20px; } .mt12 { margin-top: 12px; }
 .txt-sm { font-size: 13px; } .txt-xs { font-size: 11.5px; } .txt-muted { color: var(--text3); }
 .fw6 { font-weight: 600; } .serif { font-family: 'DM Serif Display', serif; }
 
+/* PROGRESS BAR */
+.prog-wrap { background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; margin-top: 5px; }
+.prog-bar { background: var(--accent); height: 100%; border-radius: 4px; transition: width .5s; }
+
 /* TARIF QUICK BTNS */
 .tarif-btns { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.tbtn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text2); transition: all .15s; }
+.tbtn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
 .tbtn:hover { border-color: var(--accent); color: var(--accent); }
 .tbtn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-/* ──────────────────────────────────────────
-   DÉPENSES — SECTION AMÉLIORÉE
-   ────────────────────────────────────────── */
-
-/* Boîte de déduction avec aperçu calculé */
-.dep-deduction-box {
-  background: linear-gradient(135deg, #f0fdf4 0%, #fafff7 100%);
-  border: 1.5px solid #bbf7d0;
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  margin-top: 8px;
-  display: none;
-}
-.dep-deduction-box.visible { display: block; }
-.dep-deduction-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  padding: 4px 0;
-}
-.dep-deduction-row .lbl { color: var(--text2); }
-.dep-deduction-row .val { font-weight: 700; }
-.dep-deduction-row .val-green { color: var(--accent); font-weight: 700; }
-.dep-deduction-row .val-gray { color: var(--text3); text-decoration: line-through; font-weight: 400; }
-
-/* Séparateur de catégorie dans la liste */
-.dep-cat-header {
-  background: var(--surface2);
-  padding: 7px 15px;
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--text3);
-  border-bottom: 1px solid var(--border);
-}
-
-/* Pill de pourcentage dans le tableau */
-.pct-pill {
-  display: inline-block;
-  background: #fef9c3;
-  color: #854d0e;
-  border: 1px solid #fde68a;
-  border-radius: 20px;
-  padding: 2px 9px;
-  font-size: 11px;
-  font-weight: 700;
-}
-.pct-pill-100 {
-  background: #dcfce7;
-  color: #166534;
-  border-color: #bbf7d0;
-}
-
-/* AIDE & GUIDES STYLES */
-.aide-sec { font-size: 14.5px; line-height: 1.6; color: var(--text); }
-.aide-sec h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--accent); margin-top: 24px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-.aide-sec h3:first-child { margin-top: 0; }
-.aide-sec h4 { font-size: 15px; margin: 18px 0 8px; font-weight: 600; }
-.aide-sec p { margin-bottom: 12px; }
-.aide-sec ul { margin-left: 22px; margin-bottom: 16px; }
-.aide-sec li { margin-bottom: 6px; }
-.aide-sec code.inline { background: var(--surface2); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; border: 1px solid var(--border); }
-.aide-sec pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 13px; font-family: monospace; margin: 14px 0; }
 
 @media(max-width:700px){
   .main { padding: 14px; }
   .g2, .g4 { grid-template-columns: 1fr; }
   .header, .tabs { padding-left: 16px; padding-right: 16px; }
+  .tabs { overflow-x: auto; }
 }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <div class="brand">
     <div class="brand-icon">🩺</div>
@@ -252,54 +212,87 @@ tbody td { padding: 11px 15px; }
     </div>
   </div>
   <div class="header-actions">
-    <div id="statusPill" style="display:none;align-items:center;gap:7px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 13px;font-size:12px;color:white;white-space:nowrap;">
+    <!-- Connection status pill -->
+    <div id="statusPill" style="
+      display:none;
+      align-items:center;
+      gap:7px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:20px;
+      padding:5px 13px;
+      font-size:12px;
+      color:white;
+      white-space:nowrap;
+    ">
       <span id="statusDot" style="width:8px;height:8px;border-radius:50%;background:#aaa;display:inline-block;transition:background .3s"></span>
       <span id="statusText">—</span>
     </div>
+    <!-- Last sync time -->
     <div id="lastSyncLabel" style="display:none;font-size:11px;color:rgba(255,255,255,0.55);white-space:nowrap">
       Dernière sync : <span id="lastSyncTime">—</span>
     </div>
-    <button class="hbtn hbtn-solid" id="syncBtn" onclick="syncData()" style="display:none;gap:6px">🔄 Synchroniser</button>
+    <button class="hbtn hbtn-solid" id="syncBtn" onclick="syncData()" style="display:none;gap:6px">
+      🔄 Synchroniser
+    </button>
     <button class="hbtn" onclick="openConfig()">⚙️ Config</button>
   </div>
 </div>
 
+<!-- SETUP BANNER -->
 <div id="setupBanner">
-  ⚠️ <strong>Configuration requise :</strong> Avant d'utiliser l'app, <a onclick="openConfig()">configurez votre Google Sheet ici</a> — ou activez le <a onclick="enableDemo()">mode démo</a>.
+  ⚠️ <strong>Configuration requise :</strong> Avant d'utiliser l'app, <a onclick="openConfig()">configurez votre Google Sheet ici</a> — ou activez le <a onclick="enableDemo()">mode démo</a> pour tester maintenant.
 </div>
 
+<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="showTab('sessions')" id="tab-sessions"><span>📋</span> Nouvelle Session</div>
-  <div class="tab" onclick="showTab('facture')" id="tab-facture"><span>🧾</span> Facture</div>
-  <div class="tab" onclick="showTab('depenses')" id="tab-depenses"><span>💳</span> Dépenses</div>
+  <div class="tab" onclick="showTab('facture')" id="tab-facture"><span>🧾</span> Facture du mois</div>
   <div class="tab" onclick="showTab('clients')" id="tab-clients"><span>👥</span> Clients</div>
   <div class="tab" onclick="showTab('resume')" id="tab-resume"><span>📊</span> Résumé</div>
-  <div class="tab" onclick="showTab('aide')" id="tab-aide"><span>❓</span> Aide & Guides</div>
 </div>
 
 <div class="main">
 
-<!-- ══════════════════════════════════════════
-     PAGE : NOUVELLE SESSION
-═══════════════════════════════════════════ -->
+<!-- ═══ TAB 1: SESSIONS ═══ -->
 <div class="page active" id="page-sessions">
   <div class="g2" style="align-items:start">
+
     <div class="card">
       <div class="card-title">📋 Enregistrer une session</div>
       <div class="card-sub">Consultez un client et enregistrez automatiquement</div>
 
       <div class="fg">
         <label class="fl">Date de la session *</label>
-        <input type="date" class="fc" id="sDate" onchange="loadTodaySessions()">
+        <input type="date" class="fc" id="sDate">
       </div>
 
       <div class="fg">
         <label class="fl">Client *</label>
-        <div class="sw mb16">
-          <span class="si">🔍</span>
-          <input type="text" class="fc" id="clientSearch" placeholder="Rechercher un client..." oninput="filterClients()">
+        <div style="position:relative">
+          <input type="text" class="fc" id="clientSearch"
+            placeholder="Tapez le nom ou prénom du client..."
+            oninput="filterClients()"
+            autocomplete="off"
+            style="padding-left:34px"
+          >
+          <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none">🔍</span>
         </div>
-        <select class="fc" id="clientSelect" size="5" style="height:auto;padding:4px 0;" onchange="onClientSelect()"></select>
+        <!-- Dropdown list -->
+        <div id="clientDropdown" style="
+          display:none;
+          position:relative;
+          background:white;
+          border:1.5px solid var(--accent);
+          border-top:none;
+          border-radius:0 0 var(--radius-sm) var(--radius-sm);
+          max-height:200px;
+          overflow-y:auto;
+          z-index:50;
+          box-shadow:0 4px 12px rgba(0,0,0,0.1);
+          margin-top:-2px;
+        "></div>
+        <input type="hidden" id="clientSelectedId">
         <div class="txt-xs txt-muted mt12" id="clientInfo" style="line-height:1.8"></div>
         <button class="btn btn-outline btn-sm" style="margin-top:8px;width:100%" onclick="openAddClient()">+ Nouveau client</button>
       </div>
@@ -314,13 +307,15 @@ tbody td { padding: 11px 15px; }
         </div>
         <input type="number" class="fc" id="tarifInput" value="150" min="0" step="5" oninput="updatePreview();unselectTarifBtns()">
       </div>
-      
+
       <div class="fg">
         <label class="fl">Notes (optionnel)</label>
         <input type="text" class="fc" id="sNotes" placeholder="Ex: Suivi, Évaluation initiale...">
       </div>
-      
-      <button class="btn btn-primary btn-full" id="saveSessBtn" onclick="saveSession()">💾 Enregistrer la session</button>
+
+      <button class="btn btn-primary btn-full" id="saveSessBtn" onclick="saveSession()">
+        💾 Enregistrer la session
+      </button>
     </div>
 
     <div>
@@ -328,36 +323,35 @@ tbody td { padding: 11px 15px; }
         <div class="card-title">Aperçu du calcul</div>
         <div class="card-sub" id="pctLabel">Frais clinique : 30% · Votre part : 70%</div>
         <div class="preview">
-          <div class="preview-row"><span class="lbl">Tarif consultation</span><span id="pTarif" class="c-bold">$150.00</span></div>
-          <div class="preview-row"><span class="lbl">Frais clinique (<span id="pPctLbl">30</span>%)</span><span id="pFrais" class="c-red">-$45.00</span></div>
-          <div class="preview-row"><span class="lbl">✅ Votre revenu net</span><span id="pTotal" class="c-green">$105.00</span></div>
+          <div class="preview-row"><span class="lbl">Tarif consultation</span><span id="pTarif" class="c-bold">$140.00</span></div>
+          <div class="preview-row"><span class="lbl">Frais clinique (<span id="pPctLbl">30</span>%)</span><span id="pFrais" class="c-red">-$42.00</span></div>
+          <div class="preview-row"><span class="lbl">✅ Votre revenu net</span><span id="pTotal" class="c-green">$98.00</span></div>
         </div>
       </div>
-      
+
       <div class="card">
         <div class="flex aic jsb mb16">
-          <div class="card-title" style="margin:0" id="todayCardTitle">Sessions du jour</div>
+          <div class="card-title" style="margin:0">Sessions d'aujourd'hui</div>
           <span class="badge badge-gold" id="todayCount">0 session(s)</span>
         </div>
         <div id="todayList">
-          <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>
+          <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session aujourd'hui</div></div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE : FACTURE
-═══════════════════════════════════════════ -->
+<!-- ═══ TAB 2: FACTURE ═══ -->
 <div class="page" id="page-facture">
   <div class="card mb20">
     <div class="flex jsb aic" style="flex-wrap:wrap;gap:12px">
       <div>
         <div class="card-title">🧾 Facture mensuelle</div>
-        <div class="card-sub">Exportez la facture de la clinique avec noms confidentiels (Loi 25)</div>
+        <div class="card-sub">Générez et exportez la facture du mois sélectionné</div>
       </div>
-      <div class="flex gap8 aic">
+      <div class="flex gap8 aic" style="flex-wrap:wrap">
         <select class="fc" id="fMois" style="width:140px" onchange="loadFacture()"></select>
         <select class="fc" id="fAnnee" style="width:88px" onchange="loadFacture()"></select>
         <button class="btn btn-primary" onclick="exportFacture()">📥 Exporter Excel</button>
@@ -392,143 +386,15 @@ tbody td { padding: 11px 15px; }
   </div>
 
   <div class="card">
-    <div id="factureContent"></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     PAGE : DÉPENSES  (VERSION AMÉLIORÉE)
-═══════════════════════════════════════════ -->
-<div class="page" id="page-depenses">
-  <div class="g2" style="align-items:start">
-
-    <!-- ─── FORMULAIRE ─── -->
-    <div class="card">
-      <div class="card-title">💳 Ajouter une dépense</div>
-      <div class="card-sub">Déductible d'impôt (Formulaire TP-80)</div>
-      <div class="alert alert-info" style="margin-bottom:16px;font-size:12.5px">
-        ☁️ <strong>Sauvegarde Google Sheets :</strong> Les dépenses sont synchronisées dans votre feuille Google (onglet <strong>Depenses</strong>). En mode démo, elles sont temporaires (mémoire uniquement).
-      </div>
-      
-      <div class="fg">
-        <label class="fl">Date</label>
-        <input type="date" class="fc" id="dDate">
-      </div>
-
-      <!-- Catégorie avec groupes -->
-      <div class="fg">
-        <label class="fl">Catégorie</label>
-        <select class="fc" id="dCat" onchange="onCatChange()">
-          <optgroup label="─── Cotisations & Assurances ───">
-            <option value="Cotisations prof. (OPQ)|100">Cotisations prof. (OPQ)</option>
-            <option value="Assurances (Responsabilité)|100">Assurances (Responsabilité)</option>
-          </optgroup>
-          <optgroup label="─── Formation & Matériel ───">
-            <option value="Frais de formation / Congrès|100">Frais de formation / Congrès</option>
-            <option value="Fournitures de bureau / Tests|100">Fournitures de bureau / Tests</option>
-          </optgroup>
-          <optgroup label="─── Logiciels & Outils ───">
-            <option value="Logiciel gestion patients (ex: Jane, Psylio)|100">🖥️ Logiciel gestion patients (ex: Jane, Psylio)</option>
-            <option value="Abonnement logiciel professionnel|100">🖥️ Abonnement logiciel professionnel</option>
-          </optgroup>
-          <optgroup label="─── Télécommunications ───">
-            <option value="Téléphone cellulaire|mixed">📱 Téléphone cellulaire (usage mixte)</option>
-            <option value="Internet résidentiel|mixed">🌐 Internet résidentiel (usage mixte)</option>
-          </optgroup>
-          <optgroup label="─── Bureau à domicile ───">
-            <option value="Bureau à domicile — Loyer seul|mixed">🏠 Loyer (appartement / maison)</option>
-            <option value="Bureau à domicile — Services groupés (Loyer+Élec+Hydro)|mixed">🏠 Services groupés (Loyer + Élec. + Hydro-Québec)</option>
-            <option value="Bureau à domicile — Électricité (Hydro-Québec)|mixed">⚡ Électricité / Hydro-Québec (seul)</option>
-            <option value="Bureau à domicile — Chauffage|mixed">🔥 Chauffage</option>
-          </optgroup>
-          <optgroup label="─── Déplacements & Repas ───">
-            <option value="Frais de représentation (Repas)|50">🍽️ Repas d'affaires (50% max selon Revenu Québec)</option>
-            <option value="Frais de véhicule (Déplacements)|mixed">🚗 Frais de véhicule (usage mixte)</option>
-          </optgroup>
-          <optgroup label="─── Autre ───">
-            <option value="Autre dépense admissible|100">Autre dépense admissible</option>
-          </optgroup>
-        </select>
-      </div>
-
-      <!-- Montant total payé -->
-      <div class="fg">
-        <label class="fl">Montant total payé ($ CAD)</label>
-        <input type="number" class="fc" id="dAmount" min="0" step="0.01" placeholder="Ex: 85.50" oninput="updateDepPreview()">
-      </div>
-
-      <!-- Sélecteur % déduction (visible si usage mixte) -->
-      <div class="fg" id="pctDeductionGroup" style="display:none;">
-        <label class="fl">% usage professionnel à déduire</label>
-        <select class="fc" id="dPctDeduction" onchange="updateDepPreview()">
-          <option value="10">10% — Usage pro minimal</option>
-          <option value="20">20%</option>
-          <option value="25">25%</option>
-          <option value="30">30% — Usage pro modéré</option>
-          <option value="33">33%</option>
-          <option value="40">40%</option>
-          <option value="50">50% — Moitié-moitié</option>
-          <option value="60">60%</option>
-          <option value="70">70% — Usage pro élevé</option>
-          <option value="75">75%</option>
-          <option value="80">80%</option>
-          <option value="90">90%</option>
-          <option value="100">100% — Exclusivement professionnel</option>
-        </select>
-
-        <!-- Aperçu de la déduction calculée -->
-        <div class="dep-deduction-box" id="depDeductionBox">
-          <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">📊 Aperçu de la déduction</div>
-          <div class="dep-deduction-row">
-            <span class="lbl">Montant total payé</span>
-            <span class="val" id="ddTotal">—</span>
-          </div>
-          <div class="dep-deduction-row">
-            <span class="lbl">Portion non déductible</span>
-            <span class="val val-gray" id="ddNonDed">—</span>
-          </div>
-          <div class="dep-deduction-row" style="border-top:1px solid #bbf7d0;margin-top:4px;padding-top:8px">
-            <span class="lbl" style="font-weight:600">✅ Montant déductible</span>
-            <span class="val val-green" id="ddDed">—</span>
-          </div>
-          <div class="dep-deduction-row" style="border-top:none;margin-top:2px;padding-top:0">
-            <span class="lbl" style="color:var(--text3);font-size:12px">Économie d'impôt estimée (~36%)</span>
-            <span style="color:#6b7280;font-size:12px;font-weight:600" id="ddEco">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Note sur les repas (fixe à 50%) -->
-      <div id="repasNote" style="display:none;">
-        <div class="alert alert-warning" style="margin-top:-8px;margin-bottom:14px">
-          🍽️ <strong>Repas d'affaires :</strong> Revenu Québec limite la déduction à <strong>50%</strong> du montant. Le montant déductible est calculé automatiquement.
-        </div>
-      </div>
-
-      <div class="fg">
-        <label class="fl">Description (Optionnel)</label>
-        <input type="text" class="fc" id="dNotes" placeholder="Ex: Renouvellement OPQ, Facture Rogers mars...">
-      </div>
-
-      <button class="btn btn-primary btn-full" onclick="saveDepense()">💾 Ajouter la dépense</button>
-    </div>
-
-    <!-- ─── LISTE DES DÉPENSES ─── -->
-    <div class="card">
-      <div class="flex aic jsb mb16">
-        <div class="card-title" style="margin:0">Dépenses de l'année</div>
-        <select class="fc" id="dAnnee" style="width:88px; padding: 6px;" onchange="renderDepenses()"></select>
-      </div>
-      <div id="depensesList"></div>
+    <div id="factureContent">
+      <div class="empty"><div class="empty-ico">📂</div><div class="empty-title">Sélectionnez un mois</div><div class="txt-sm txt-muted">Les sessions enregistrées apparaîtront ici</div></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE : CLIENTS
-═══════════════════════════════════════════ -->
+<!-- ═══ TAB 3: CLIENTS ═══ -->
 <div class="page" id="page-clients">
-  <div class="flex jsb aic mb20">
+  <div class="flex jsb aic mb20" style="flex-wrap:wrap;gap:12px">
     <div>
       <h2 class="serif" style="font-size:23px">👥 Liste des clients</h2>
       <div class="txt-sm txt-muted mt12" id="clientCountLbl">—</div>
@@ -541,19 +407,17 @@ tbody td { padding: 11px 15px; }
   <div class="card">
     <div class="tw">
       <table>
-        <thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Naissance</th><th>Date d'appel</th><th>Statut</th><th>Sessions</th><th></th></tr></thead>
-        <tbody id="clientTbody"></tbody>
+        <thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Naissance</th><th>Date d'appel</th><th>Statut</th><th>Sessions</th></tr></thead>
+        <tbody id="clientTbody"><tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text3)">Chargement…</td></tr></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE : RÉSUMÉ
-═══════════════════════════════════════════ -->
+<!-- ═══ TAB 4: RÉSUMÉ ═══ -->
 <div class="page" id="page-resume">
-  <div class="flex jsb aic mb20">
-    <h2 class="serif" style="font-size:23px">📊 Tableau de bord fiscal</h2>
+  <div class="flex jsb aic mb20" style="flex-wrap:wrap;gap:12px">
+    <h2 class="serif" style="font-size:23px">📊 Tableau de bord</h2>
     <div class="flex gap8">
       <select class="fc" id="rMois" style="width:130px" onchange="loadResume()"></select>
       <select class="fc" id="rAnnee" style="width:84px" onchange="loadResume()"></select>
@@ -561,210 +425,29 @@ tbody td { padding: 11px 15px; }
   </div>
 
   <div class="g4 mb20">
-    <div class="stat"><div class="stat-ico">💰</div><div class="stat-lbl">Revenu Net (Clinique)</div><div class="stat-val" id="stNetAnnee">—</div><div class="stat-sub">Après frais clinique</div></div>
-    <div class="stat"><div class="stat-ico">💳</div><div class="stat-lbl">Dépenses Pro</div><div class="stat-val c-red" id="stDepenses">—</div><div class="stat-sub">Déductibles d'impôts</div></div>
-    <div class="stat"><div class="stat-ico">🏛️</div><div class="stat-lbl">Impôts & Soc. Est.</div><div class="stat-val c-red" id="stTaxes">—</div><div class="stat-sub">Prov + Féd + RRQ + RQAP</div></div>
-    <div class="stat"><div class="stat-ico">💵</div><div class="stat-lbl">Dans vos poches</div><div class="stat-val c-green" id="stReal">—</div><div class="stat-sub">Bénéfice net final (Année)</div></div>
-  </div>
-
-  <div class="alert alert-info">
-    💡 <strong>Note Fiscale:</strong> Les impôts sont calculés sur votre <strong>Revenu Imposable</strong> (Revenu Net Clinique - Dépenses Pro déductibles). Ajouter des dépenses réduit directement le montant d'impôts à payer.
+    <div class="stat"><div class="stat-ico">📋</div><div class="stat-lbl">Sessions</div><div class="stat-val" id="st1">—</div><div class="stat-sub">ce mois</div></div>
+    <div class="stat"><div class="stat-ico">💰</div><div class="stat-lbl">Revenu net</div><div class="stat-val" id="st2">—</div><div class="stat-sub">après frais clinique</div></div>
+    <div class="stat"><div class="stat-ico">🏥</div><div class="stat-lbl">Frais clinique</div><div class="stat-val" id="st3">—</div><div class="stat-sub" id="st3sub">30% du brut</div></div>
+    <div class="stat"><div class="stat-ico">👤</div><div class="stat-lbl">Clients distincts</div><div class="stat-val" id="st4">—</div><div class="stat-sub">consultés</div></div>
   </div>
 
   <div class="g2">
     <div class="card">
       <div class="card-title">Clients les plus fréquents</div>
       <div class="card-sub">Ce mois</div>
-      <div id="topClients"></div>
+      <div id="topClients"><div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée</div></div></div>
     </div>
     <div class="card">
       <div class="card-title">Répartition par tarif</div>
       <div class="card-sub">Sessions par niveau de tarif</div>
-      <div id="tarifBreak"></div>
+      <div id="tarifBreak"><div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE : AIDE & GUIDES
-═══════════════════════════════════════════ -->
-<div class="page" id="page-aide">
-  
-  <div class="card aide-sec mb20">
-    <h3>📱 Manuel d'utilisation : Gestionnaire Clinique Réseau 360</h3>
-    <p>Cette application est conçue spécifiquement pour simplifier la gestion administrative et la planification fiscale d'un psychologue travaillant comme travailleur autonome pour une clinique au Québec.</p>
-    
-    <h4>1. Configuration Initiale (⚙️ Config)</h4>
-    <p>Avant de commencer, configurez vos données de base. Ces informations sont utilisées pour générer vos factures :</p>
-    <ul>
-      <li><strong>Professionnel :</strong> Votre nom complet et titre (ex. <em>Psychologue, OPQ #...</em>).</li>
-      <li><strong>Clinique :</strong> Les coordonnées de la clinique à qui vous facturez.</li>
-      <li><strong>Facturation :</strong> Le pourcentage retenu par la clinique (par défaut <strong>30%</strong>).</li>
-    </ul>
+</div><!-- /main -->
 
-    <h4>2. Onglet Dépenses — Nouveautés</h4>
-    <ul>
-      <li><strong>Catégories détaillées :</strong> L'Internet résidentiel et le cellulaire sont maintenant des catégories séparées. Les logiciels de gestion de patients (Jane, Psylio, etc.) ont leur propre catégorie à 100% déductible.</li>
-      <li><strong>Services groupés :</strong> Si vous payez un seul montant couvrant loyer + électricité + Hydro-Québec, utilisez "Services groupés". Entrez le montant total et choisissez le % pro.</li>
-      <li><strong>Sélecteur de % :</strong> Pour les dépenses à usage mixte (cellulaire, Internet, loyer, véhicule), un menu déroulant vous permet de choisir précisément le pourcentage professionnel. L'app calcule automatiquement le montant déductible.</li>
-      <li><strong>Repas d'affaires :</strong> Limité à 50% selon Revenu Québec — ce plafond est appliqué automatiquement.</li>
-    </ul>
-  </div>
-
-  <div class="card aide-sec mb20">
-    <h3>💼 Guide des Déductions Fiscales pour Travailleurs Autonomes (Québec)</h3>
-    <p>En tant que travailleur autonome, vous êtes votre propre entreprise. Le gouvernement vous permet de déduire de vos revenus toute dépense engagée dans le but de gagner un revenu professionnel.</p>
-
-    <h4>Règle d'or : Remboursement vs Déduction</h4>
-    <p>Il est faux de penser que le gouvernement "rembourse" vos dépenses. Le gouvernement accorde une <strong>déduction</strong> : il soustrait vos dépenses de vos revenus nets. Le résultat est votre <strong>Revenu Imposable</strong>. Vous récupérez l'équivalent de votre Taux Marginal d'Imposition (TMI). Par exemple, avec un TMI d'environ 36%, chaque dollar de dépense enregistré vous fait économiser 36 cents en impôts.</p>
-
-    <h4>Exemples pratiques : Comment saisir vos dépenses</h4>
-    
-    <p><strong>1. Dépenses à 100% (Usage exclusivement professionnel)</strong><br>
-    <em>Exemple : Frais de l'OPQ ($950) ou logiciel Jane App ($80/mois).</em> Vous inscrivez le montant total. Économie d'impôt réelle : environ $342 / $29 par mois.</p>
-
-    <p><strong>2. Dépenses mixtes (Usage professionnel et personnel)</strong><br>
-    Choisissez la catégorie et utilisez le sélecteur de %. L'app calcule le montant déductible automatiquement.</p>
-    <ul>
-      <li><strong>Téléphone cellulaire :</strong> Facture de $50. Usage pro estimé à 50% → Déductible : $25.</li>
-      <li><strong>Internet résidentiel :</strong> Facture de $80. Usage pro (téléthérapie, notes) estimé à 30% → Déductible : $24.</li>
-      <li><strong>Services groupés (Loyer+Élec+Hydro) :</strong> $2,200/mois tout compris. Bureau = 10% superficie. Choisissez 10% → Déductible : $220/mois.</li>
-    </ul>
-  </div>
-
-  <div class="card aide-sec">
-    <h3>☁️ Guide de Connexion : Sauvegarde sur Google Sheets</h3>
-    <p>Connectez l'application à votre propre compte Google pour sauvegarder vos clients et sessions en toute sécurité dans le nuage.</p>
-
-    <h4>Étape 1 : Créer le fichier de base de données</h4>
-    <ul>
-      <li>Allez sur <a href="https://sheets.google.com" target="_blank">Google Sheets</a> et créez un fichier vide.</li>
-      <li>Nommez le premier onglet <strong>Clients</strong> et ajoutez ces titres en haut (A1 à H1) :<br> <code class="inline">id | Prénom | Nom | Téléphone | Date_Naissance | Date_Appel | Sexe | Actif</code></li>
-      <li>Ajoutez un deuxième onglet nommé <strong>Sessions</strong> et ajoutez ces titres (A1 à J1) :<br> <code class="inline">id | Date_Session | Client | ClientId | Tarif | Frais | Net | Mois | Facture | Notes</code></li>
-      <li>Ajoutez un troisième onglet nommé <strong>Depenses</strong> (sans accent !) et ajoutez ces titres (A1 à G1) :<br> <code class="inline">id | date | category | pctDed | amountTotal | amountDed | notes</code></li>
-    </ul>
-
-    <h4>⚠️ Important : si vous aviez déjà un Apps Script déployé</h4>
-    <p>Vous devez <strong>créer un nouveau déploiement</strong> (pas modifier l'existant) après avoir remplacé le code, sinon les nouvelles actions (<code class="inline">getDepenses</code>, <code class="inline">addDepense</code>, <code class="inline">deleteDepense</code>) ne fonctionneront pas.</p>
-
-    <h4>Étape 2 : Ajouter le "cerveau" (Apps Script)</h4>
-    <ul>
-      <li>Dans le menu en haut, cliquez sur <strong>Extensions &gt; Apps Script</strong>.</li>
-      <li>Effacez le code présent et copiez/collez <strong>exactement</strong> ce code :</li>
-    </ul>
-
-<pre><code>function doGet(e) {
-  var action = e.parameter.action;
-  var dataStr = e.parameter.data;
-  var data = dataStr ? JSON.parse(dataStr) : {};
-
-  if (action === 'ping') return json({status: 'ok'});
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // ── CLIENTS ──
-  if (action === 'getClients')
-    return json({data: getSheetData(ss.getSheetByName("Clients"))});
-
-  if (action === 'addClient') {
-    var sheet = ss.getSheetByName("Clients");
-    var id = new Date().getTime().toString();
-    sheet.appendRow([id, data["Prénom"], data["Nom"], data["Téléphone"],
-                     data["Date_Naissance"], data["Date_Appel"], data["Sexe"], data["Actif"]]);
-    return json({id: id});
-  }
-
-  // ── SESSIONS ──
-  if (action === 'getSessions')
-    return json({data: getSheetData(ss.getSheetByName("Sessions"))});
-
-  if (action === 'addSession') {
-    var sheet = ss.getSheetByName("Sessions");
-    var id = 's' + new Date().getTime().toString();
-    sheet.appendRow([id, data.Date_Session, data.Client, data.ClientId,
-                     data.Tarif, data.Frais, data.Net, data.Mois, data.Facture, data.Notes]);
-    return json({id: id});
-  }
-
-  // ── DÉPENSES ──
-  if (action === 'getDepenses')
-    return json({data: getSheetData(ss.getSheetByName("Depenses"))});
-
-  if (action === 'addDepense') {
-    var sheet = ss.getSheetByName("Depenses");
-    var id = 'd' + new Date().getTime().toString();
-    sheet.appendRow([id, data.date, data.category,
-                     data.pctDed, data.amountTotal, data.amountDed, data.notes]);
-    return json({id: id});
-  }
-
-  if (action === 'deleteClient') {
-    var sheet = ss.getSheetByName("Clients");
-    var rows = sheet.getDataRange().getValues();
-    // Try match by id first (col A), then by Prénom+Nom (col B+C) if id is empty
-    for (var i = 1; i < rows.length; i++) {
-      var rowId = String(rows[i][0]).trim();
-      var cleanId = String(data.id).replace('_row_','').trim();
-      // Match by _row_ index
-      if (data.id && String(data.id).startsWith('_row_')) {
-        var rowIndex = parseInt(data.id.replace('_row_',''));
-        if (i - 1 === rowIndex) { sheet.deleteRow(i + 1); return json({deleted: true}); }
-      } else if (rowId !== '' && rowId === String(data.id)) {
-        sheet.deleteRow(i + 1); return json({deleted: true});
-      }
-    }
-    return json({deleted: false, error: 'Not found'});
-  }
-
-  if (action === 'deleteDepense') {
-    var sheet = ss.getSheetByName("Depenses");
-    var rows = sheet.getDataRange().getValues();
-    for (var i = 1; i < rows.length; i++) {
-      if (String(rows[i][0]) === String(data.id)) {
-        sheet.deleteRow(i + 1);
-        return json({deleted: true});
-      }
-    }
-    return json({deleted: false, error: 'Not found'});
-  }
-
-  return json({error: "Action inconnue"});
-}
-
-function json(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function getSheetData(sheet) {
-  if (!sheet) return [];
-  var data = sheet.getDataRange().getValues();
-  if (data.length <= 1) return [];
-  var headers = data[0], result = [];
-  for (var i = 1; i < data.length; i++) {
-    var row = data[i], obj = {};
-    for (var j = 0; j < headers.length; j++) obj[headers[j]] = row[j];
-    result.push(obj);
-  }
-  return result;
-}</code></pre>
-
-    <h4>Étape 3 : Déployer et obtenir votre lien secret</h4>
-    <ul>
-      <li>Cliquez sur 💾 pour sauvegarder.</li>
-      <li>Cliquez sur <strong>Déployer</strong> &gt; <strong>Nouveau déploiement</strong> &gt; Type : <strong>Application Web</strong>.</li>
-      <li>Exécuter en tant que : <em>Moi</em> | Qui a accès : <strong>Tous les utilisateurs</strong>.</li>
-      <li>Copiez l'URL longue générée et collez-la dans <strong>⚙️ Config</strong>.</li>
-    </ul>
-  </div>
-
-</div>
-
-</div>
-
-<!-- ══════════════════════════════════════════
-     MODAL : CONFIG
-═══════════════════════════════════════════ -->
+<!-- ═══ MODAL CONFIG ═══ -->
 <div class="mbg" id="cfgModal">
 <div class="modal">
   <div class="modal-title">⚙️ Configuration</div>
@@ -780,18 +463,20 @@ function getSheetData(sheet) {
   <div class="cfg-sec">
     <div class="cfg-sec-title">🏥 Clinique (destinataire de la facture)</div>
     <div class="fg"><label class="fl">Nom de la clinique</label><input class="fc" id="cNomClinique" placeholder="Clinique Réseau 360"></div>
-    <div class="fg"><label class="fl">Adresse</label><input class="fc" id="cAdresse" placeholder="2480 Ch Ste-Foy #200, Québec City, QC"></div>
+    <div class="fg"><label class="fl">Adresse</label><input class="fc" id="cAdresse" placeholder="2480 Ch Ste-Foy #200, Québec City, QC G1V 1T6"></div>
     <div class="fg"><label class="fl">Téléphone</label><input class="fc" id="cTel" placeholder="(418) 952-1723"></div>
   </div>
 
   <div class="cfg-sec">
     <div class="cfg-sec-title">💲 Facturation</div>
-    <div class="fg"><label class="fl">% frais clinique</label><input class="fc" id="cPct" type="number" value="30" min="0" max="100"></div>
+    <div class="fg"><label class="fl">% frais clinique</label><input class="fc" id="cPct" type="number" value="30" min="0" max="100" placeholder="30"></div>
   </div>
 
   <div class="cfg-sec">
     <div class="cfg-sec-title">🔗 Google Sheets (base de données)</div>
-    <div class="alert alert-warning">⚠️ Collez l'URL de votre Google Apps Script ci-dessous.</div>
+    <div class="alert alert-warning">
+      ⚠️ Vous devez créer un Google Apps Script et coller son URL ci-dessous. <strong>Voir la guide incluse dans le package.</strong>
+    </div>
     <div class="fg">
       <label class="fl">URL du Web App (Apps Script)</label>
       <input class="fc" id="cScriptUrl" placeholder="https://script.google.com/macros/s/XXXX/exec">
@@ -803,7 +488,7 @@ function getSheetData(sheet) {
     <div class="cfg-sec-title">💡 Mode démo (sans Google Sheets)</div>
     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
       <input type="checkbox" id="cDemo" style="width:16px;height:16px">
-      Utiliser les données de démonstration
+      Utiliser les données de démonstration (aucune configuration requise)
     </label>
   </div>
 
@@ -814,9 +499,7 @@ function getSheetData(sheet) {
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL : NOUVEAU CLIENT
-═══════════════════════════════════════════ -->
+<!-- ═══ MODAL NOUVEAU CLIENT ═══ -->
 <div class="mbg" id="addClientModal">
 <div class="modal">
   <div class="modal-title">+ Nouveau client</div>
@@ -845,36 +528,40 @@ function getSheetData(sheet) {
 </div>
 </div>
 
-<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:white;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s,opacity .3s;opacity:0;z-index:999;white-space:nowrap;pointer-events:none"></div>
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:22px;right:22px;background:var(--accent);color:white;padding:11px 18px;border-radius:9px;font-size:14px;font-weight:500;box-shadow:0 4px 22px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;max-width:310px;line-height:1.4"></div>
 
 <script>
 // ════════════════════════════
-//  ÉTAT DE L'APPLICATION
+//  STATE
 // ════════════════════════════
 let cfg = {};
 let clients = [];
 let sessions = [];
-let depenses = []; 
 let isDemo = false;
 
 const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const today = (() => {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-})();
 
 const DEMO_CLIENTS = [
-  {id:'1', Prénom:'Mathieu', Nom:'Guitor', Téléphone:'514-686-0198', Date_Naissance:'1994-09-08', Date_Appel:'2026-03-13', Sexe:'Masculin', Actif:'Oui'},
-  {id:'2', Prénom:'Pascale', Nom:'Roussin', Téléphone:'418-573-7580', Date_Naissance:'1969-12-26', Date_Appel:'2026-03-13', Sexe:'Féminin', Actif:'Oui'}
+  {id:'1',Prénom:'Mathieu',Nom:'Guitor',Téléphone:'514-686-0198',Date_Naissance:'1994-09-08',Date_Appel:'2026-03-13',Sexe:'Masculin',Actif:'Oui'},
+  {id:'2',Prénom:'Kevin',Nom:'Grenier',Téléphone:'581-995-0099',Date_Naissance:'1993-07-24',Date_Appel:'2026-03-13',Sexe:'Masculin',Actif:'Oui'},
+  {id:'3',Prénom:'Pascale',Nom:'Roussin',Téléphone:'418-573-7580',Date_Naissance:'1969-12-26',Date_Appel:'2026-03-13',Sexe:'Féminin',Actif:'Oui'},
+  {id:'4',Prénom:'Bobby',Nom:'Nadeau',Téléphone:'(418) 234-6050',Date_Naissance:'1990-03-23',Date_Appel:'2026-03-09',Sexe:'Masculin',Actif:'Oui'},
+  {id:'5',Prénom:'Joshua',Nom:'Daubioul',Téléphone:'(514) 443-2609',Date_Naissance:'2000-09-26',Date_Appel:'2026-03-07',Sexe:'Masculin',Actif:'Oui'},
+  {id:'6',Prénom:'Christine',Nom:'Hamel',Téléphone:'514-794-7888',Date_Naissance:'1957-06-20',Date_Appel:'2026-03-04',Sexe:'Féminin',Actif:'Oui'},
+  {id:'7',Prénom:'Sonia',Nom:'Kammoun',Téléphone:'418-455-5608',Date_Naissance:'1993-09-13',Date_Appel:'2026-02-06',Sexe:'Féminin',Actif:'Oui'},
+  {id:'8',Prénom:'Lucie',Nom:'Nicole',Téléphone:'(581) 578-8340',Date_Naissance:'1956-05-18',Date_Appel:'2026-01-30',Sexe:'Féminin',Actif:'Oui'},
+  {id:'9',Prénom:'David',Nom:'Boivin',Téléphone:'418-803-4861',Date_Naissance:'1989-08-30',Date_Appel:'2026-01-17',Sexe:'Masculin',Actif:'Oui'},
+  {id:'10',Prénom:'André',Nom:'Gosselin',Téléphone:'418-801-9746',Date_Naissance:'1981-02-17',Date_Appel:'2025-12-23',Sexe:'Masculin',Actif:'Oui'},
 ];
+
+const today = new Date().toISOString().split('T')[0];
 const DEMO_SESSIONS = [
-  {id:'s1', Date_Session:today, Client:'Mathieu Guitor', ClientId:'1', Tarif:150, Frais:45, Net:105, Mois:`${MOIS[new Date().getMonth()]} ${new Date().getFullYear()}`, Facture:`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getFullYear()).slice(-2)}`, Notes:''}
-];
-const DEMO_DEPENSES = [
-  {id:'d1', date:'2026-03-05', category:'Cotisations prof. (OPQ)', pctDed:100, amountTotal:650.00, amountDed:650.00, notes:'Renouvellement annuel'},
-  {id:'d2', date:'2026-04-10', category:'Assurances (Responsabilité)', pctDed:100, amountTotal:150.00, amountDed:150.00, notes:'Prime annuelle'},
-  {id:'d3', date:'2026-04-01', category:'Logiciel gestion patients (ex: Jane, Psylio)', pctDed:100, amountTotal:80.00, amountDed:80.00, notes:'Abonnement Jane App - avril'},
-  {id:'d4', date:'2026-04-01', category:'Internet résidentiel', pctDed:30, amountTotal:80.00, amountDed:24.00, notes:'Vidéotron - avril'},
+  {id:'s1',Date_Session:today,Client:'Mathieu Guitor',ClientId:'1',Tarif:140,Frais:42,Net:98,Mois:`${MOIS[new Date().getMonth()]} ${new Date().getFullYear()}`,Facture:`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getFullYear()).slice(-2)}`,Notes:''},
+  {id:'s2',Date_Session:today,Client:'Kevin Grenier',ClientId:'2',Tarif:140,Frais:42,Net:98,Mois:`${MOIS[new Date().getMonth()]} ${new Date().getFullYear()}`,Facture:`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getFullYear()).slice(-2)}`,Notes:''},
+  {id:'s3',Date_Session:'2026-03-15',Client:'Pascale Roussin',ClientId:'3',Tarif:120,Frais:36,Net:84,Mois:'Mars 2026',Facture:'03-26',Notes:''},
+  {id:'s4',Date_Session:'2026-03-18',Client:'Bobby Nadeau',ClientId:'4',Tarif:140,Frais:42,Net:98,Mois:'Mars 2026',Facture:'03-26',Notes:''},
+  {id:'s5',Date_Session:'2026-03-20',Client:'Christine Hamel',ClientId:'6',Tarif:140,Frais:42,Net:98,Mois:'Mars 2026',Facture:'03-26',Notes:''},
 ];
 
 // ════════════════════════════
@@ -883,22 +570,18 @@ const DEMO_DEPENSES = [
 window.onload = () => {
   loadCfg();
   fillSelectors();
-  
   document.getElementById('sDate').value = today;
-  document.getElementById('dDate').value = today;
   updatePreview();
   setTarif(150);
-
-  if (cfg.demo) { 
-    enableDemo(true); 
-    return; 
-  }
+  if (cfg.demo) { enableDemo(true); return; }
   if (cfg.scriptUrl) {
     document.getElementById('setupBanner').style.display = 'none';
     document.getElementById('syncBtn').style.display = '';
+    setStatus('syncing', 'Connexion…', '');
     syncData();
     return;
   }
+  // No config yet
   setStatus('warn', 'Non configuré', '');
 };
 
@@ -907,242 +590,13 @@ function fillSelectors() {
   ['fMois','rMois'].forEach(id => {
     document.getElementById(id).innerHTML = MOIS.map((m,i)=>`<option value="${i+1}"${i===now.getMonth()?' selected':''}>${m}</option>`).join('');
   });
-  ['fAnnee','rAnnee','dAnnee'].forEach(id => {
+  ['fAnnee','rAnnee'].forEach(id => {
     document.getElementById(id).innerHTML = [2024,2025,2026,2027].map(y=>`<option value="${y}"${y===now.getFullYear()?' selected':''}>${y}</option>`).join('');
   });
 }
 
 // ════════════════════════════
-//  FISCALITÉ (QUÉBEC 2026)
-// ════════════════════════════
-const TAX_BRACKETS_2026 = [
-  { max: 16452,  rate: 0.0000 },
-  { max: 18952,  rate: 0.1169 },
-  { max: 54345,  rate: 0.2569 },
-  { max: 58523,  rate: 0.3069 },
-  { max: 108680, rate: 0.3612 },
-  { max: 117045, rate: 0.4112 },
-  { max: 132245, rate: 0.4571 },
-  { max: 181440, rate: 0.4746 },
-  { max: 258482, rate: 0.5021 },
-  { max: Infinity, rate: 0.5331 }
-];
-
-function estimarImpuestos(ingresoImponible) {
-  if (ingresoImponible <= 0) return 0;
-  let impuestoTotal = 0;
-  let limiteAnterior = 0;
-  for (let i = 0; i < TAX_BRACKETS_2026.length; i++) {
-    let bracket = TAX_BRACKETS_2026[i];
-    let anchoBracket = bracket.max - limiteAnterior;
-    if (ingresoImponible > limiteAnterior) {
-      let cantidadEnBracket = Math.min(ingresoImponible - limiteAnterior, anchoBracket);
-      impuestoTotal += cantidadEnBracket * bracket.rate;
-    } else { break; }
-    limiteAnterior = bracket.max;
-  }
-  return impuestoTotal;
-}
-
-function estimarCotizaciones(ingresoImponible) {
-  if (ingresoImponible <= 0) return 0;
-  let rrq = 0, rqap = 0;
-  if (ingresoImponible > 3500) {
-    let rrqPalier1 = Math.min(ingresoImponible - 3500, 74600 - 3500) * 0.1260;
-    let rrqPalier2 = Math.max(0, Math.min(ingresoImponible, 85000) - 74600) * 0.0800;
-    rrq = rrqPalier1 + rrqPalier2;
-  }
-  let revenuRqap = Math.min(ingresoImponible, 103000);
-  rqap = revenuRqap * 0.00764;
-  return rrq + rqap;
-}
-
-// ════════════════════════════
-//  DÉPENSES — LOGIQUE AMÉLIORÉE
-// ════════════════════════════
-
-/**
- * Retourne le type de déduction pour une valeur de catégorie :
- *  '100'   → 100% déductible, pas de sélecteur
- *  '50'    → 50% fixe (repas), pas de sélecteur
- *  'mixed' → sélecteur % visible
- */
-function getCatType(catValue) {
-  const parts = catValue.split('|');
-  return parts.length > 1 ? parts[1] : '100';
-}
-function getCatLabel(catValue) {
-  return catValue.split('|')[0];
-}
-
-function onCatChange() {
-  const rawVal = document.getElementById('dCat').value;
-  const type = getCatType(rawVal);
-  const pctGroup = document.getElementById('pctDeductionGroup');
-  const repasNote = document.getElementById('repasNote');
-
-  pctGroup.style.display = 'none';
-  repasNote.style.display = 'none';
-
-  if (type === 'mixed') {
-    pctGroup.style.display = '';
-    // Défaut intelligent selon la catégorie
-    const label = getCatLabel(rawVal).toLowerCase();
-    const sel = document.getElementById('dPctDeduction');
-    if (label.includes('cellulaire') || label.includes('téléphone')) sel.value = '50';
-    else if (label.includes('internet')) sel.value = '30';
-    else if (label.includes('loyer') || label.includes('services groupés') || label.includes('électricité') || label.includes('chauffage')) sel.value = '10';
-    else if (label.includes('véhicule')) sel.value = '50';
-    else sel.value = '50';
-  } else if (type === '50') {
-    repasNote.style.display = '';
-  }
-  updateDepPreview();
-}
-
-function updateDepPreview() {
-  const rawVal = document.getElementById('dCat').value;
-  const type = getCatType(rawVal);
-  const total = parseFloat(document.getElementById('dAmount').value) || 0;
-  const box = document.getElementById('depDeductionBox');
-
-  if (type !== 'mixed' || total <= 0) {
-    box.classList.remove('visible');
-    return;
-  }
-
-  const pct = parseInt(document.getElementById('dPctDeduction').value) || 0;
-  const ded = round2(total * pct / 100);
-  const nonDed = round2(total - ded);
-  const eco = round2(ded * 0.36); // TMI estimé 36%
-
-  document.getElementById('ddTotal').textContent = `$${total.toFixed(2)}`;
-  document.getElementById('ddNonDed').textContent = nonDed > 0 ? `-$${nonDed.toFixed(2)}` : '$0.00';
-  document.getElementById('ddDed').textContent = `$${ded.toFixed(2)}`;
-  document.getElementById('ddEco').textContent = `≈ $${eco.toFixed(2)} récupérés`;
-
-  box.classList.add('visible');
-}
-
-async function saveDepense() {
-  const date = v('dDate');
-  const rawCat = document.getElementById('dCat').value;
-  const catLabel = getCatLabel(rawCat);
-  const catType = getCatType(rawCat);
-  const totalAmt = parseFloat(v('dAmount'));
-  const notes = v('dNotes');
-
-  if (!date || !totalAmt || totalAmt <= 0) { toast('⚠️ Montant et date requis', 'warning'); return; }
-
-  let pctDed = 100;
-  let amountDed = totalAmt;
-
-  if (catType === 'mixed') {
-    pctDed = parseInt(document.getElementById('dPctDeduction').value) || 100;
-    amountDed = round2(totalAmt * pctDed / 100);
-  } else if (catType === '50') {
-    pctDed = 50;
-    amountDed = round2(totalAmt * 0.5);
-  }
-
-  const dep = {
-    id: 'd' + Date.now(),
-    date,
-    category: catLabel,
-    pctDed,
-    amountTotal: totalAmt,
-    amountDed,
-    notes
-  };
-
-  const btn = document.querySelector('#page-depenses .btn-primary');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Enregistrement…'; }
-
-  try {
-    if (isDemo || !cfg.scriptUrl) {
-      depenses.push(dep);
-      toast('✅ Dépense enregistrée (démo — non sauvegardée)');
-    } else {
-      const res = await callScript('addDepense', dep);
-      dep.id = res.id || dep.id;
-      depenses.push(dep);
-      const msg = pctDed < 100
-        ? `✅ Dépense sauvegardée — $${amountDed.toFixed(2)} déductibles (${pctDed}%)`
-        : `✅ Dépense sauvegardée — $${amountDed.toFixed(2)} déductibles`;
-      toast(msg);
-    }
-    document.getElementById('dAmount').value = '';
-    document.getElementById('dNotes').value = '';
-    document.getElementById('depDeductionBox').classList.remove('visible');
-    renderDepenses();
-  } catch(e) {
-    toast('❌ ' + e.message, 'error');
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Ajouter la dépense'; }
-  }
-}
-
-function renderDepenses() {
-  const y = document.getElementById('dAnnee').value;
-  const expYear = depenses.filter(e => e.date && e.date.startsWith(String(y)));
-  expYear.sort((a,b) => b.date.localeCompare(a.date));
-
-  const el = document.getElementById('depensesList');
-  if (!expYear.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-ico">💳</div><div class="txt-sm">Aucune dépense cette année</div></div>';
-    return;
-  }
-
-  // Totaux : utilise amountDed (montant déductible réel)
-  const totalDed = expYear.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
-  const totalBrut = expYear.reduce((a,e) => a + (e.amountTotal ?? e.amount ?? 0), 0);
-
-  el.innerHTML = `<div class="tw"><table>
-    <thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Payé</th><th>% Pro</th><th>Déductible</th><th></th></tr></thead>
-    <tbody>${expYear.map(e => {
-      const pct = e.pctDed ?? 100;
-      const amtTotal = e.amountTotal ?? e.amount ?? 0;
-      const amtDed = e.amountDed ?? amtTotal;
-      const pillClass = pct === 100 ? 'pct-pill pct-pill-100' : 'pct-pill';
-      return `<tr>
-        <td>${fmtDate(e.date)}</td>
-        <td><span class="badge badge-purple" style="white-space:normal;max-width:180px;display:inline-block;line-height:1.4">${e.category}</span></td>
-        <td>${e.notes || '—'}</td>
-        <td class="fw6">$${amtTotal.toFixed(2)}</td>
-        <td><span class="${pillClass}">${pct}%</span></td>
-        <td class="fw6 c-green">$${amtDed.toFixed(2)}</td>
-        <td><button class="btn btn-danger" onclick="deleteDepense('${e.id}')">✕</button></td>
-      </tr>`;
-    }).join('')}</tbody>
-    <tfoot><tr>
-      <td class="tfoot" colspan="3">TOTAL ${y}</td>
-      <td class="tfoot">$${totalBrut.toFixed(2)}</td>
-      <td class="tfoot"></td>
-      <td class="tfoot c-green">$${totalDed.toFixed(2)}</td>
-      <td class="tfoot"></td>
-    </tr></tfoot>
-  </table></div>
-  <div class="alert alert-success" style="margin-top:12px">
-    💰 <strong>Économie d'impôt estimée :</strong> ≈ $${(totalDed * 0.36).toFixed(0)} (basé sur TMI ~36%)
-  </div>`;
-}
-
-async function deleteDepense(id) {
-  if (!confirm('Supprimer cette dépense ?')) return;
-  try {
-    if (!isDemo && cfg.scriptUrl) {
-      await callScript('deleteDepense', { id });
-    }
-    depenses = depenses.filter(e => String(e.id) !== String(id));
-    renderDepenses();
-    toast('🗑️ Dépense supprimée');
-  } catch(e) {
-    toast('❌ ' + e.message, 'error');
-  }
-}
-
-// ════════════════════════════
-//  CONFIG & GOOGLE SHEETS
+//  CONFIG
 // ════════════════════════════
 function loadCfg() {
   try { cfg = JSON.parse(localStorage.getItem('clinique360_cfg')||'{}'); } catch(e){ cfg={}; }
@@ -1150,7 +604,7 @@ function loadCfg() {
   if(!cfg.nomPro) cfg.nomPro='Briseida Quintana-Camacho';
   if(!cfg.titrePro) cfg.titrePro='Candidate au permis de psychologue par voie d\'équivalences';
   if(!cfg.nomClinique) cfg.nomClinique='Clinique Réseau 360';
-  if(!cfg.adresse) cfg.adresse='2480 Ch Ste-Foy #200, Québec City, QC G1V 1T6';
+  if(!cfg.adresse) cfg.adresse='2480 Ch Ste-Foy #200, Québec City, Quebec G1V 1T6';
   if(!cfg.tel) cfg.tel='(418) 952-1723';
 }
 
@@ -1177,19 +631,15 @@ function saveConfig() {
   cfg.scriptUrl = v('cScriptUrl');
   cfg.demo = document.getElementById('cDemo').checked;
   localStorage.setItem('clinique360_cfg', JSON.stringify(cfg));
-  
   closeModal('cfgModal');
   updatePctUI();
   updatePreview();
   toast('✅ Configuration sauvegardée');
-  
-  if (cfg.demo) { 
-    enableDemo(true); 
-    return; 
-  }
+  if (cfg.demo) { enableDemo(true); return; }
   if (cfg.scriptUrl) {
-    isDemo = false;
     document.getElementById('setupBanner').style.display='none';
+  document.getElementById('syncBtn').style.display='none';
+  setStatus('demo', 'Mode démo', clients.length + ' clients');
     document.getElementById('syncBtn').style.display='';
     syncData();
   }
@@ -1200,28 +650,27 @@ function enableDemo(silent=false) {
   cfg.demo = true;
   clients = JSON.parse(JSON.stringify(DEMO_CLIENTS));
   sessions = JSON.parse(JSON.stringify(DEMO_SESSIONS));
-  
-  depenses = JSON.parse(JSON.stringify(DEMO_DEPENSES));
-
   document.getElementById('setupBanner').style.display='none';
   renderClientDropdown();
   renderClientTable();
   loadTodaySessions();
-  renderDepenses();
-  setStatus('demo', 'Mode démo', clients.length + ' clients');
+  updateClientCount();
   if(!silent) toast('🟡 Mode démo activé');
 }
 
 function updatePctUI() {
   const p = cfg.pct||30;
   document.getElementById('pctLabel').textContent = `Frais clinique : ${p}% · Votre part : ${100-p}%`;
-  const el = document.getElementById('pPctLbl');
-  if(el) el.textContent = p;
+  document.getElementById('pPctLbl').textContent = p;
 }
 
+// ════════════════════════════
+//  GOOGLE SHEETS API
+// ════════════════════════════
 async function callScript(action, data={}) {
   if (!cfg.scriptUrl) throw new Error('URL du script non configurée');
   const url = cfg.scriptUrl + '?action=' + action + '&data=' + encodeURIComponent(JSON.stringify(data));
+  // Google Apps Script necesita redirect:follow para manejar sus redirecciones internas
   const resp = await fetch(url, { redirect: 'follow' });
   if (!resp.ok) throw new Error('Erreur réseau: ' + resp.status);
   const text = await resp.text();
@@ -1230,14 +679,19 @@ async function callScript(action, data={}) {
     if (json.error) throw new Error(json.error);
     return json;
   } catch(e) {
-    throw new Error('Réponse invalide du script. Vérifiez le lien.');
+    throw new Error('Réponse invalide du script. Vérifiez que le script est bien publié en accès "Tout le monde".');
   }
 }
 
 async function syncData() {
-  if (isDemo) { setStatus('demo', 'Mode démo', clients.length + ' clients'); return; }
-  if (!cfg.scriptUrl) { setStatus('error', 'Non configuré', 'Cliquez sur Config'); return; }
-  
+  if (isDemo) {
+    setStatus('demo', 'Mode démo', clients.length + ' clients');
+    return;
+  }
+  if (!cfg.scriptUrl) {
+    setStatus('error', 'Non configuré', 'Cliquez sur Config');
+    return;
+  }
   const btn = document.getElementById('syncBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Sync…';
@@ -1245,36 +699,23 @@ async function syncData() {
 
   try {
     const c = await callScript('getClients');
-    clients = (c.data || []).map((row, i) => {
-      if (!row.id || String(row.id).trim() === '') row.id = '_row_' + i;
-      return row;
-    });
+    clients = c.data || [];
     const s = await callScript('getSessions');
-    sessions = (s.data || []).map((row, i) => {
-      if (!row.id || String(row.id).trim() === '') row.id = '_srow_' + i;
-      return row;
-    });
-    const d = await callScript('getDepenses');
-    depenses = (d.data || []).map(e => ({
-      ...e,
-      pctDed: Number(e.pctDed) || 100,
-      amountTotal: Number(e.amountTotal) || 0,
-      amountDed: Number(e.amountDed) || 0
-    }));
+    sessions = s.data || [];
 
     renderClientDropdown();
     renderClientTable();
     loadTodaySessions();
     updateClientCount();
-    renderDepenses();
 
+    // Update last sync time
     const now = new Date();
     const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     document.getElementById('lastSyncTime').textContent = t;
     document.getElementById('lastSyncLabel').style.display = '';
 
-    setStatus('ok', 'Connecté', clients.length + ' clients · ' + depenses.length + ' dépenses');
-    toast('✅ Synchronisé avec Google Sheets');
+    setStatus('ok', 'Connecté', clients.length + ' clients · ' + sessions.length + ' sessions');
+    toast('✅ Synchronisé — ' + clients.length + ' clients, ' + sessions.length + ' sessions');
   } catch(e) {
     setStatus('error', 'Erreur de connexion', e.message.slice(0,40));
     toast('❌ ' + e.message, 'error');
@@ -1289,6 +730,7 @@ function setStatus(state, label, sub) {
   const dot  = document.getElementById('statusDot');
   const txt  = document.getElementById('statusText');
   pill.style.display = 'flex';
+
   const states = {
     ok:      { color: '#52b788', text: '✓ ' + label + (sub ? '  ·  ' + sub : '') },
     error:   { color: '#e74c3c', text: '✗ ' + label + (sub ? '  —  ' + sub : '') },
@@ -1311,12 +753,12 @@ async function testGoogleScript() {
     if (json.status === 'ok') toast('✅ Connexion Google réussie!');
     else throw new Error(JSON.stringify(json));
   } catch(e) {
-    toast('❌ Échec: ' + e.message, 'error');
+    toast('❌ Échec: ' + e.message + ' — Vérifiez que le script est publié en accès "Tout le monde".', 'error');
   }
 }
 
 // ════════════════════════════
-//  SESSIONS & CLIENTS
+//  SESSIONS
 // ════════════════════════════
 function setTarif(val) {
   ['t120','t140','t150','tOther'].forEach(id => { var el=document.getElementById(id); if(el) el.classList.remove('active'); });
@@ -1324,7 +766,8 @@ function setTarif(val) {
   else if(val===140) document.getElementById('t140').classList.add('active');
   else if(val===150) document.getElementById('t150').classList.add('active');
   else document.getElementById('tOther').classList.add('active');
-  document.getElementById('tarifInput').value = val > 0 ? val : '';
+  if(val>0) document.getElementById('tarifInput').value = val;
+  else document.getElementById('tarifInput').value = '';
   updatePreview();
 }
 
@@ -1348,19 +791,60 @@ function updatePreview() {
   document.getElementById('pTotal').textContent=`$${net.toFixed(2)}`;
 }
 
+// ── Searchable client dropdown ──
+let selectedClient = null;
+
 function filterClients() {
-  const q = document.getElementById('clientSearch').value.toLowerCase();
-  const sel = document.getElementById('clientSelect');
-  const active = clients.filter(c=>c.Actif!=='Non');
-  const filtered = active.filter(c=>`${c.Prénom} ${c.Nom}`.toLowerCase().includes(q)).sort((a,b)=>`${a.Nom}${a.Prénom}`.localeCompare(`${b.Nom}${b.Prénom}`));
-  sel.innerHTML = filtered.map(c=>`<option value="${c.id}">${c.Prénom} ${c.Nom}</option>`).join('');
+  const q = document.getElementById('clientSearch').value.trim().toLowerCase();
+  const dropdown = document.getElementById('clientDropdown');
+
+  selectedClient = null;
+  document.getElementById('clientSelectedId').value = '';
+  document.getElementById('clientInfo').innerHTML = '';
+
+  if (!q) { dropdown.style.display = 'none'; return; }
+
+  const active = clients.filter(c => c.Actif !== 'Non');
+  const filtered = active
+    .filter(c => `${c.Prénom} ${c.Nom}`.toLowerCase().includes(q) ||
+                 c.Prénom.toLowerCase().startsWith(q) ||
+                 c.Nom.toLowerCase().startsWith(q))
+    .sort((a,b) => `${a.Nom}${a.Prénom}`.localeCompare(`${b.Nom}${b.Prénom}`))
+    .slice(0, 20);
+
+  if (!filtered.length) {
+    dropdown.innerHTML = '<div style="padding:10px 14px;color:#999;font-size:13px">Aucun client trouvé</div>';
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = filtered.map(c => `
+    <div onclick="selectClient('${c.id}')"
+      style="padding:9px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center"
+      onmouseover="this.style.background='#f0fdf4'"
+      onmouseout="this.style.background='white'">
+      <span>${c.Prénom} <strong>${c.Nom}</strong></span>
+      ${c.Téléphone ? `<span style="font-size:11px;color:#aaa">${c.Téléphone}</span>` : ''}
+    </div>`).join('');
+  dropdown.style.display = 'block';
 }
-function renderClientDropdown() { filterClients(); }
-function onClientSelect() {
-  const id = document.getElementById('clientSelect').value;
-  const c = clients.find(x=>String(x.id)===String(id));
-  document.getElementById('clientInfo').innerHTML = c ? `📞 ${c.Téléphone||'—'} &nbsp;|&nbsp; 📅 Né(e) : ${c.Date_Naissance||'—'}` : '';
+
+function selectClient(id) {
+  const c = clients.find(x => String(x.id) === String(id));
+  if (!c) return;
+  selectedClient = c;
+  document.getElementById('clientSelectedId').value = id;
+  document.getElementById('clientSearch').value = c.Prénom + ' ' + c.Nom;
+  document.getElementById('clientDropdown').style.display = 'none';
+  document.getElementById('clientInfo').innerHTML =
+    '📞 ' + (c.Téléphone||'—') + ' &nbsp;|&nbsp; 📅 Né(e) : ' + (c.Date_Naissance||'—');
 }
+
+function renderClientDropdown() {
+  selectedClient = null;
+}
+
+function onClientSelect() {}
 
 async function saveSession() {
   const date = document.getElementById('sDate').value;
@@ -1376,9 +860,10 @@ async function saveSession() {
   const p = cfg.pct||30;
   const frais = round2(tarif*p/100);
   const net = round2(tarif-frais);
+  // Parsear fecha manualmente para evitar desfase de zona horaria (GMT-3, GMT-5, etc.)
   const parts = date.split('-');
   const dYear = parseInt(parts[0]);
-  const dMonth = parseInt(parts[1]) - 1; 
+  const dMonth = parseInt(parts[1]) - 1; // 0-indexed
   const mois = `${MOIS[dMonth]} ${dYear}`;
   const numFact = `${String(dMonth+1).padStart(2,'0')}-${String(dYear).slice(-2)}`;
 
@@ -1407,66 +892,247 @@ async function saveSession() {
   }
 }
 
-function normalizeDate(d) {
-  if (!d) return '';
-  var s = String(d);
-  // Already YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  // Google Sheets Date object or ISO string: extract YYYY-MM-DD
-  var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (iso) return iso[1]+'-'+iso[2]+'-'+iso[3];
-  // DD/MM/YYYY
-  var dmy = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (dmy) return dmy[3]+'-'+dmy[2]+'-'+dmy[1];
-  // Try JS Date parse as last resort
-  var dt = new Date(d);
-  if (!isNaN(dt)) {
-    return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
-  }
-  return s;
-}
-
 function loadTodaySessions() {
-  const selDate = document.getElementById('sDate').value || today;
-  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
-
-  // Update card title dynamically
-  const titleEl = document.getElementById('todayCardTitle');
-  if (titleEl) {
-    titleEl.textContent = selDate === today ? "Sessions d'aujourd'hui" : "Sessions du " + fmtDate(selDate);
-  }
-
+  const todaySess = sessions.filter(s=>s.Date_Session===today);
   document.getElementById('todayCount').textContent=`${todaySess.length} session(s)`;
   const el = document.getElementById('todayList');
   if (!todaySess.length) {
-    el.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>';
+    el.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session aujourd\'hui</div></div>';
     return;
   }
-  const totT=todaySess.reduce((a,s)=>a+(Number(s.Tarif)||0),0);
-  const totF=todaySess.reduce((a,s)=>a+(Number(s.Frais)||0),0);
-  const totN=todaySess.reduce((a,s)=>a+(Number(s.Net)||0),0);
+  const totT=todaySess.reduce((a,s)=>a+s.Tarif,0);
+  const totF=todaySess.reduce((a,s)=>a+s.Frais,0);
+  const totN=todaySess.reduce((a,s)=>a+s.Net,0);
   el.innerHTML=`<div class="tw"><table>
     <thead><tr><th>Client</th><th>Tarif</th><th>Frais</th><th>Net</th></tr></thead>
     <tbody>${todaySess.map(s=>`<tr>
-      <td><strong>${s.Client}</strong></td>
-      <td>$${Number(s.Tarif).toFixed(2)}</td>
-      <td class="c-red">-$${Number(s.Frais).toFixed(2)}</td>
-      <td class="c-green fw6">$${Number(s.Net).toFixed(2)}</td>
+      <td><strong>${getConfidentialName(s)}</strong></td>
+      <td>$${s.Tarif}</td>
+      <td class="c-red">-$${s.Frais}</td>
+      <td class="c-green fw6">$${s.Net}</td>
     </tr>`).join('')}</tbody>
     <tfoot><tr>
       <td class="tfoot">TOTAL</td>
+      <td class="tfoot">$${totT}</td>
+      <td class="tfoot c-red">-$${totF}</td>
+      <td class="tfoot c-green">$${totN}</td>
+    </tr></tfoot>
+  </table></div>`;
+}
+
+// ════════════════════════════
+//  FACTURE
+// ════════════════════════════
+function loadFacture() {
+  const m = parseInt(document.getElementById('fMois').value);
+  const y = parseInt(document.getElementById('fAnnee').value);
+  const moisStr = `${MOIS[m-1]} ${y}`;
+  const numF = `${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
+  const sess = sessions.filter(s=>s.Mois===moisStr);
+
+  document.getElementById('invNum').textContent=`Facture # ${numF}`;
+  const now=new Date();
+  document.getElementById('invDate').textContent=`Date : ${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
+  document.getElementById('invPeriode').textContent=`Période : ${MOIS[m-1]}`;
+  document.getElementById('invPro').innerHTML=`${cfg.nomPro||'—'}<br><span style="font-weight:400;font-size:13px;color:var(--text3)">${cfg.titrePro||''}</span>`;
+  document.getElementById('invClient').innerHTML=`<strong>${cfg.nomClinique||'—'}</strong><br>${cfg.adresse||''}<br>${cfg.tel||''}`;
+
+  const totT=sess.reduce((a,s)=>a+s.Tarif,0);
+  const totF=sess.reduce((a,s)=>a+s.Frais,0);
+  const totN=sess.reduce((a,s)=>a+s.Net,0);
+  document.getElementById('invStats').innerHTML=`
+    <div>${sess.length} session(s)</div>
+    <div>Total brut : <strong>$${totT}</strong></div>
+    <div style="color:var(--accent);font-weight:700">Net à recevoir : $${totN}</div>`;
+
+  if (!sess.length) {
+    document.getElementById('factureContent').innerHTML=`<div class="empty"><div class="empty-ico">📂</div><div class="empty-title">Aucune session pour ${moisStr}</div><div class="txt-sm txt-muted">Enregistrez des sessions dans l'onglet "Nouvelle Session"</div></div>`;
+    return;
+  }
+
+  document.getElementById('factureContent').innerHTML=`<div class="tw"><table>
+    <thead><tr><th>Date</th><th>Client</th><th>Tarif</th><th>Frais (${cfg.pct||30}%)</th><th>Total professionnel</th></tr></thead>
+    <tbody>${sess.map(s=>`<tr>
+      <td>${fmtDate(s.Date_Session)}</td>
+      <td>${s.Client}</td>
+      <td>$${s.Tarif.toFixed(2)}</td>
+      <td class="c-red">$${s.Frais.toFixed(2)}</td>
+      <td class="c-green fw6">$${s.Net.toFixed(2)}</td>
+    </tr>`).join('')}</tbody>
+    <tfoot><tr>
+      <td class="tfoot" colspan="2">TOTAL — ${sess.length} sessions</td>
       <td class="tfoot">$${totT.toFixed(2)}</td>
-      <td class="tfoot c-red">-$${totF.toFixed(2)}</td>
+      <td class="tfoot c-red">$${totF.toFixed(2)}</td>
       <td class="tfoot c-green">$${totN.toFixed(2)}</td>
     </tr></tfoot>
   </table></div>`;
 }
 
+function exportFacture() {
+  const m = parseInt(document.getElementById('fMois').value);
+  const y = parseInt(document.getElementById('fAnnee').value);
+  const moisStr = `${MOIS[m-1]} ${y}`;
+  const numF = `${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
+  const sess = sessions.filter(s=>s.Mois===moisStr);
+  if (!sess.length) { toast('⚠️ Aucune session pour ce mois','warning'); return; }
+
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
+  const totT = sess.reduce((a,s)=>a+Number(s.Tarif),0);
+  const totF = sess.reduce((a,s)=>a+Number(s.Frais),0);
+  const totN = sess.reduce((a,s)=>a+Number(s.Net),0);
+  const pct  = cfg.pct || 30;
+  const nomPro      = cfg.nomPro      || '';
+  const titrePro    = cfg.titrePro    || '';
+  const nomClinique = cfg.nomClinique || '';
+  const adresse     = cfg.adresse     || '';
+  const tel         = cfg.tel         || '';
+
+  // ── HTML table approach for Excel (preserves all formatting) ──
+  const sessionRows = sess.map((s,i) => {
+    const bg = i%2===0 ? '#ffffff' : '#fafafa';
+    return `<tr style="background:${bg}">
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${fmtDate(s.Date_Session)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${s.Client}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#333">$${Number(s.Tarif).toFixed(2)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#c0392b">$${Number(s.Frais).toFixed(2)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;font-weight:bold;color:#1a1a1a">$${Number(s.Net).toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="UTF-8">
+  <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+  <x:ExcelWorksheet><x:Name>${MOIS[m-1]} ${y}</x:Name>
+  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+  </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+  <style>
+    body { font-family: Calibri, Arial, sans-serif; margin: 0; }
+    table { border-collapse: collapse; width: 100%; }
+    td { vertical-align: top; }
+  </style>
+</head>
+<body>
+<table style="width:720px;margin:0 auto;font-family:Calibri,Arial,sans-serif">
+
+  <!-- TOP MARGIN -->
+  <tr><td colspan="5" style="height:20px"></td></tr>
+
+  <!-- FACTURE TITLE + NUMBER -->
+  <tr>
+    <td colspan="3" style="padding:0 12px">
+      <div style="font-size:32pt;font-weight:bold;letter-spacing:-1px;color:#111111;line-height:1">FACTURE</div>
+      <div style="font-size:10pt;color:#888888;margin-top:2px;letter-spacing:1px;text-transform:uppercase">Services professionnels en psychologie</div>
+    </td>
+    <td colspan="2" style="padding:0 12px;text-align:right;vertical-align:bottom">
+      <div style="font-size:18pt;font-weight:bold;color:#111111">N° ${numF}</div>
+      <div style="font-size:10pt;color:#888888">Date : ${dateStr}</div>
+    </td>
+  </tr>
+
+  <!-- SEPARATOR -->
+  <tr><td colspan="5" style="padding:10px 12px 0">
+    <div style="border-top:2px solid #111111;width:100%"></div>
+  </td></tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:16px"></td></tr>
+
+  <!-- PROFESSIONNEL + PÉRIODE -->
+  <tr>
+    <td colspan="3" style="padding:0 12px">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Professionnel</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${nomPro}</div>
+      <div style="font-size:9pt;color:#666666;margin-top:2px">${titrePro}</div>
+    </td>
+    <td colspan="2" style="padding:0 12px;text-align:right">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Période</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${MOIS[m-1]} ${y}</div>
+    </td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:16px"></td></tr>
+
+  <!-- CLIENT -->
+  <tr>
+    <td colspan="5" style="padding:0 12px">
+      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Destinataire</div>
+      <div style="font-size:12pt;font-weight:bold;color:#111111">${nomClinique}</div>
+      <div style="font-size:9.5pt;color:#555555;margin-top:2px">${adresse}</div>
+      <div style="font-size:9.5pt;color:#555555">${tel}</div>
+    </td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:24px"></td></tr>
+
+  <!-- TABLE HEADER -->
+  <tr style="background:#f2f2f2">
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Date</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Client</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Tarif</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Frais clinique (${pct}%)</td>
+    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;letter-spacing:0.8px;text-transform:uppercase;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">Total net</td>
+  </tr>
+
+  <!-- SESSION ROWS -->
+  ${sessionRows}
+
+  <!-- TOTAL ROW -->
+  <tr>
+    <td colspan="2" style="padding:10px 12px;font-size:11pt;font-weight:bold;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">TOTAL — ${sess.length} consultation(s)</td>
+    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totT.toFixed(2)}</td>
+    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#c0392b;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totF.toFixed(2)}</td>
+    <td style="padding:10px 12px;font-size:12pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totN.toFixed(2)}</td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td colspan="5" style="height:48px"></td></tr>
+
+  <!-- SIGNATURE BLOCK -->
+  <tr>
+    <td colspan="2" style="padding:0 12px"></td>
+    <td colspan="3" style="padding:0 12px;text-align:center">
+      <div style="border-top:1px solid #999999;padding-top:6px">
+        <div style="font-size:8.5pt;color:#999999;letter-spacing:0.5px">Signature du professionnel</div>
+        <div style="font-size:9pt;color:#555555;margin-top:4px">${nomPro}</div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- BOTTOM MARGIN -->
+  <tr><td colspan="5" style="height:30px"></td></tr>
+
+</table>
+</body>
+</html>`;
+
+  // Download as .xls (Excel-compatible HTML)
+  const blob = new Blob([html], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `Facture_${numF}_${(nomClinique||'Clinique').replace(/ /g,'_')}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ Facture professionnelle exportée!');
+}
+
+// ════════════════════════════
+//  CLIENTS
+// ════════════════════════════
 function renderClientTable() {
   const actifs = clients.filter(c=>c.Actif!=='Non');
   const tbody = document.getElementById('clientTbody');
   if (!actifs.length) {
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text3)">Aucun client</td></tr>';
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text3)">Aucun client</td></tr>';
     return;
   }
   tbody.innerHTML=actifs.map(c=>{
@@ -1479,7 +1145,6 @@ function renderClientTable() {
       <td>${c.Date_Appel||'—'}</td>
       <td><span class="badge ${c.Actif==='Oui'?'badge-green':'badge-gray'}">${c.Actif==='Oui'?'Actif':'Inactif'}</span></td>
       <td><span class="badge badge-gold">${sessCount}</span></td>
-      <td><button class="btn btn-danger" onclick="confirmDeleteClient('${c.id}','${c.Prénom} ${c.Nom}')">✕ Supprimer</button></td>
     </tr>`;
   }).join('');
 }
@@ -1497,7 +1162,8 @@ function updateClientCount() {
 }
 
 function openAddClient() {
-  ['ncPrénom','ncNom','ncTel','ncDdn'].forEach(id=>document.getElementById(id).value='');
+  ['ncPrénom','ncNom','ncTel'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ncDdn').value='';
   document.getElementById('ncSexe').value='';
   document.getElementById('ncActif').value='Oui';
   document.getElementById('addClientModal').classList.add('open');
@@ -1506,12 +1172,6 @@ function openAddClient() {
 async function saveNewClient() {
   const prenom=v('ncPrénom'), nom=v('ncNom');
   if(!prenom||!nom){toast('⚠️ Prénom et Nom obligatoires','warning');return;}
-  // Check duplicate
-  const duplicate = clients.find(c =>
-    c.Prénom.trim().toLowerCase() === prenom.toLowerCase() &&
-    c.Nom.trim().toLowerCase() === nom.toLowerCase()
-  );
-  if(duplicate){ toast('⚠️ Ce client existe déjà : ' + prenom + ' ' + nom, 'warning'); return; }
   const client={Prénom:prenom,Nom:nom,Téléphone:v('ncTel'),Date_Naissance:v('ncDdn'),Date_Appel:today,Sexe:document.getElementById('ncSexe').value,Actif:document.getElementById('ncActif').value};
   try {
     if(isDemo||!cfg.scriptUrl){
@@ -1529,58 +1189,25 @@ async function saveNewClient() {
   } catch(e){toast('❌ '+e.message,'error');}
 }
 
-async function confirmDeleteClient(id, name) {
-  if (!confirm(`Supprimer le client "${name}" ?\n\nSes sessions enregistrées ne seront pas supprimées.`)) return;
-  try {
-    if (!isDemo && cfg.scriptUrl) {
-      await callScript('deleteClient', { id });
-    }
-    clients = clients.filter(c => String(c.id) !== String(id));
-    renderClientDropdown();
-    renderClientTable();
-    updateClientCount();
-    toast(`🗑️ Client "${name}" supprimé`);
-  } catch(e) {
-    // Even if Sheets delete fails, remove from local memory
-    clients = clients.filter(c => String(c.id) !== String(id));
-    renderClientDropdown();
-    renderClientTable();
-    updateClientCount();
-    toast(`🗑️ Client "${name}" supprimé (sync manuelle recommandée)`);
-  }
-}
-
 // ════════════════════════════
-//  RÉSUMÉ & FACTURE
+//  RÉSUMÉ
 // ════════════════════════════
 function loadResume() {
   const m=parseInt(document.getElementById('rMois').value);
   const y=parseInt(document.getElementById('rAnnee').value);
   const moisStr=`${MOIS[m-1]} ${y}`;
-  
-  const sessMois = sessions.filter(s => s.Mois === moisStr);
-  const sessAnnee = sessions.filter(s => s.Mois && s.Mois.includes(String(y)));
+  const sess=sessions.filter(s=>s.Mois===moisStr);
+  const p=cfg.pct||30;
 
-  const netAnnuelClinique = sessAnnee.reduce((a,s) => a + s.Net, 0);
+  document.getElementById('st1').textContent=sess.length||'—';
+  document.getElementById('st2').textContent=sess.length?`$${sess.reduce((a,s)=>a+s.Net,0).toFixed(0)}`:'—';
+  document.getElementById('st3').textContent=sess.length?`$${sess.reduce((a,s)=>a+s.Frais,0).toFixed(0)}`:'—';
+  document.getElementById('st3sub').textContent=`${p}% du brut`;
+  document.getElementById('st4').textContent=sess.length?new Set(sess.map(s=>s.ClientId)).size:'—';
 
-  // Utilise amountDed (montant déductible réel)
-  const expAnnee = depenses.filter(e => e.date && e.date.startsWith(String(y)));
-  const totalDepenses = expAnnee.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
-
-  const revenuImposable = Math.max(0, netAnnuelClinique - totalDepenses);
-  const impotEstime = estimarImpuestos(revenuImposable);
-  const cotisationsSoc = estimarCotizaciones(revenuImposable);
-  const totalTaxes = impotEstime + cotisationsSoc;
-
-  const revenuReel = netAnnuelClinique - totalDepenses - totalTaxes;
-
-  document.getElementById('stNetAnnee').textContent = netAnnuelClinique > 0 ? `$${netAnnuelClinique.toFixed(0)}` : '—';
-  document.getElementById('stDepenses').textContent = totalDepenses > 0 ? `-$${totalDepenses.toFixed(0)}` : '—';
-  document.getElementById('stTaxes').textContent = totalTaxes > 0 ? `-$${totalTaxes.toFixed(0)}` : '—';
-  document.getElementById('stReal').textContent = revenuReel > 0 ? `$${revenuReel.toFixed(0)}` : '—';
-
+  // Top clients
   const freq={};
-  sessMois.forEach(s=>{freq[s.Client]=(freq[s.Client]||0)+1;});
+  sess.forEach(s=>{freq[s.Client]=(freq[s.Client]||0)+1;});
   const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
   document.getElementById('topClients').innerHTML=sorted.length
     ? sorted.map(([name,count],i)=>`
@@ -1593,212 +1220,25 @@ function loadResume() {
         </div>`).join('')
     : '<div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée ce mois</div></div>';
 
+  // Tarif breakdown
   const tarifs={};
-  sessMois.forEach(s=>{tarifs[`$${s.Tarif}`]=(tarifs[`$${s.Tarif}`]||0)+1;});
+  sess.forEach(s=>{tarifs[`$${s.Tarif}`]=(tarifs[`$${s.Tarif}`]||0)+1;});
   const te=Object.entries(tarifs).sort();
   document.getElementById('tarifBreak').innerHTML=te.length
     ? te.map(([t,c])=>{
-        const pct2=Math.round(c/sessMois.length*100);
+        const pct2=Math.round(c/sess.length*100);
         return `<div style="margin-bottom:18px">
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
             <span>Tarif ${t}</span><span><strong>${c}</strong> sess. (${pct2}%)</span>
           </div>
-          <div style="background:var(--border);border-radius:99px;height:8px"><div style="background:var(--accent);border-radius:99px;height:8px;width:${pct2}%;transition:width .4s"></div></div>
+          <div class="prog-wrap"><div class="prog-bar" style="width:${pct2}%"></div></div>
         </div>`;
       }).join('')
     : '<div class="empty" style="padding:28px 0"><div class="txt-sm">Aucune donnée ce mois</div></div>';
 }
 
-function loadFacture() {
-  const m = parseInt(document.getElementById('fMois').value);
-  const y = parseInt(document.getElementById('fAnnee').value);
-  const moisStr = `${MOIS[m-1]} ${y}`;
-  const sess = sessions.filter(s => s.Mois === moisStr);
-
-  const sessAnnee = sessions.filter(s => s.Mois && s.Mois.includes(String(y)));
-  const netAnnuelClinique = sessAnnee.reduce((a,s) => a + s.Net, 0);
-  
-  const expAnnee = depenses.filter(e => e.date && e.date.startsWith(String(y)));
-  const totalDepenses = expAnnee.reduce((a,e) => a + (e.amountDed ?? e.amount ?? 0), 0);
-
-  const revenuImposable = Math.max(0, netAnnuelClinique - totalDepenses);
-  const taxesTotales = estimarImpuestos(revenuImposable) + estimarCotizaciones(revenuImposable);
-  
-  let tauxEffectif = netAnnuelClinique > 0 ? (taxesTotales) / netAnnuelClinique : 0.35;
-  if (tauxEffectif < 0.35) tauxEffectif = 0.35; 
-  const pctDisplay = (tauxEffectif * 100).toFixed(1);
-
-  const numF = `${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
-  document.getElementById('invNum').textContent=`Facture # ${numF}`;
-  const now=new Date();
-  document.getElementById('invDate').textContent=`Date : ${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
-  document.getElementById('invPeriode').textContent=`Période : ${MOIS[m-1]}`;
-  document.getElementById('invPro').innerHTML=`${cfg.nomPro||'—'}<br><span style="font-weight:400;font-size:13px;color:var(--text3)">${cfg.titrePro||''}</span>`;
-  document.getElementById('invClient').innerHTML=`<strong>${cfg.nomClinique||'—'}</strong><br>${cfg.adresse||''}<br>${cfg.tel||''}`;
-
-  const totT = sess.reduce((a,s)=>a+s.Tarif,0);
-  const totF = sess.reduce((a,s)=>a+s.Frais,0);
-  const totN = sess.reduce((a,s)=>a+s.Net,0);
-  const totAerver = totN * tauxEffectif;
-
-  document.getElementById('invStats').innerHTML=`
-    <div>${sess.length} session(s)</div>
-    <div>Total brut : <strong>$${totT.toFixed(2)}</strong></div>
-    <div style="color:var(--accent);font-weight:700;margin-top:4px">Net à recevoir : $${totN.toFixed(2)}</div>
-    <div style="color:var(--warning);font-size:11.5px;margin-top:4px">🏦 À mettre de côté (Impôts/RRQ) : <strong>$${totAerver.toFixed(2)}</strong></div>`;
-
-  if (!sess.length) {
-    document.getElementById('factureContent').innerHTML=`<div class="empty"><div class="empty-ico">📂</div><div class="empty-title">Aucune session pour ${moisStr}</div></div>`;
-    return;
-  }
-
-  document.getElementById('factureContent').innerHTML=`<div class="tw"><table>
-    <thead><tr><th>Date</th><th>Client (Loi 25)</th><th>Tarif</th><th>Frais (${cfg.pct||30}%)</th><th>Net</th><th>🏦 À garder (≈${pctDisplay}%)</th></tr></thead>
-    <tbody>${sess.map(s=>`<tr>
-      <td>${fmtDate(s.Date_Session)}</td>
-      <td><strong>${getConfidentialName(s.ClientId, s.Client)}</strong></td>
-      <td>$${s.Tarif.toFixed(2)}</td>
-      <td class="c-red">-$${s.Frais.toFixed(2)}</td>
-      <td class="c-green fw6">$${s.Net.toFixed(2)}</td>
-      <td style="color:var(--warning);background:#fffbeb">-$${(s.Net * tauxEffectif).toFixed(2)}</td>
-    </tr>`).join('')}</tbody>
-    <tfoot><tr>
-      <td class="tfoot" colspan="2">TOTAL — ${sess.length} sessions</td>
-      <td class="tfoot">$${totT.toFixed(2)}</td>
-      <td class="tfoot c-red">-$${totF.toFixed(2)}</td>
-      <td class="tfoot c-green">$${totN.toFixed(2)}</td>
-      <td class="tfoot" style="color:var(--warning);background:#fef3c7">-$${totAerver.toFixed(2)}</td>
-    </tr></tfoot>
-  </table></div>`;
-}
-
-function exportFacture() {
-  const m = parseInt(document.getElementById('fMois').value);
-  const y = parseInt(document.getElementById('fAnnee').value);
-  const moisStr = `${MOIS[m-1]} ${y}`;
-  const numF = `${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
-  const sess = sessions.filter(s=>s.Mois===moisStr);
-  if (!sess.length) { toast('⚠️ Aucune session','warning'); return; }
-
-  const now = new Date();
-  const dateStr = `${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
-  const totT = sess.reduce((a,s)=>a+Number(s.Tarif),0);
-  const totF = sess.reduce((a,s)=>a+Number(s.Frais),0);
-  const totN = sess.reduce((a,s)=>a+Number(s.Net),0);
-  const pct  = cfg.pct || 30;
-
-  const sessionRows = sess.map((s,i) => {
-    const bg = i%2===0 ? '#ffffff' : '#fafafa';
-    return `<tr style="background:${bg}">
-      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${fmtDate(s.Date_Session)}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;color:#333">${getConfidentialName(s.ClientId, s.Client)}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#333">$${Number(s.Tarif).toFixed(2)}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;color:#c0392b">$${Number(s.Frais).toFixed(2)}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:11pt;text-align:right;font-weight:bold;color:#1a1a1a">$${Number(s.Net).toFixed(2)}</td>
-    </tr>`;
-  }).join('');
-
-  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="UTF-8"><style>body{font-family:Calibri,Arial,sans-serif;margin:0}table{border-collapse:collapse;width:100%}td{vertical-align:top}</style></head>
-<body>
-<table style="width:720px;margin:0 auto;font-family:Calibri,Arial,sans-serif">
-  <tr><td colspan="5" style="height:20px"></td></tr>
-  <tr>
-    <td colspan="3" style="padding:0 12px">
-      <div style="font-size:32pt;font-weight:bold;letter-spacing:-1px;color:#111111;line-height:1">FACTURE</div>
-      <div style="font-size:10pt;color:#888888;margin-top:2px;letter-spacing:1px;text-transform:uppercase">Services professionnels en psychologie</div>
-    </td>
-    <td colspan="2" style="padding:0 12px;text-align:right;vertical-align:bottom">
-      <div style="font-size:18pt;font-weight:bold;color:#111111">N° ${numF}</div>
-      <div style="font-size:10pt;color:#888888">Date : ${dateStr}</div>
-    </td>
-  </tr>
-  <tr><td colspan="5" style="padding:10px 12px 0"><div style="border-top:2px solid #111111;width:100%"></div></td></tr>
-  <tr><td colspan="5" style="height:16px"></td></tr>
-  <tr>
-    <td colspan="3" style="padding:0 12px">
-      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Professionnel</div>
-      <div style="font-size:12pt;font-weight:bold;color:#111111">${cfg.nomPro||''}</div>
-      <div style="font-size:9pt;color:#666666;margin-top:2px">${cfg.titrePro||''}</div>
-    </td>
-    <td colspan="2" style="padding:0 12px;text-align:right">
-      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Période</div>
-      <div style="font-size:12pt;font-weight:bold;color:#111111">${MOIS[m-1]} ${y}</div>
-    </td>
-  </tr>
-  <tr><td colspan="5" style="height:16px"></td></tr>
-  <tr>
-    <td colspan="5" style="padding:0 12px">
-      <div style="font-size:7.5pt;font-weight:bold;color:#999999;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Destinataire</div>
-      <div style="font-size:12pt;font-weight:bold;color:#111111">${cfg.nomClinique||''}</div>
-      <div style="font-size:9.5pt;color:#555555;margin-top:2px">${cfg.adresse||''}</div>
-      <div style="font-size:9.5pt;color:#555555">${cfg.tel||''}</div>
-    </td>
-  </tr>
-  <tr><td colspan="5" style="height:24px"></td></tr>
-  <tr style="background:#f2f2f2">
-    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;border-top:1.5px solid #111;border-bottom:1.5px solid #111">DATE</td>
-    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;border-top:1.5px solid #111;border-bottom:1.5px solid #111">CLIENT</td>
-    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">TARIF</td>
-    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">FRAIS (${pct}%)</td>
-    <td style="padding:9px 12px;font-size:8.5pt;font-weight:bold;color:#444444;text-align:right;border-top:1.5px solid #111;border-bottom:1.5px solid #111">NET</td>
-  </tr>
-  ${sessionRows}
-  <tr>
-    <td colspan="2" style="padding:10px 12px;font-size:11pt;font-weight:bold;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">TOTAL — ${sess.length} consultation(s)</td>
-    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totT.toFixed(2)}</td>
-    <td style="padding:10px 12px;font-size:11pt;font-weight:bold;text-align:right;color:#c0392b;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totF.toFixed(2)}</td>
-    <td style="padding:10px 12px;font-size:12pt;font-weight:bold;text-align:right;color:#111111;border-top:2px solid #111111;border-bottom:1px solid #111111">$${totN.toFixed(2)}</td>
-  </tr>
-  <tr><td colspan="5" style="height:48px"></td></tr>
-  <tr>
-    <td colspan="2" style="padding:0 12px"></td>
-    <td colspan="3" style="padding:0 12px;text-align:center">
-      <div style="border-top:1px solid #999999;padding-top:6px">
-        <div style="font-size:8.5pt;color:#999999;letter-spacing:0.5px">Signature du professionnel</div>
-        <div style="font-size:9pt;color:#555555;margin-top:4px">${cfg.nomPro||''}</div>
-      </div>
-    </td>
-  </tr>
-  <tr><td colspan="5" style="height:30px"></td></tr>
-</table>
-</body>
-</html>`;
-
-  const blob = new Blob([html], {type:'application/vnd.ms-excel;charset=utf-8'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url;
-  a.download = `Facture_${numF}_${(cfg.nomClinique||'Clinique').replace(/ /g,'_')}.xls`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast('✅ Facture exportée!');
-}
-
-function getConfidentialName(clientId, fullName) {
-  // Primero intentar buscar el cliente por ID para obtener Prénom y Nom separados
-  const c = clients.find(x => String(x.id).trim() === String(clientId).trim());
-  if (c && c.Nom && c.Prénom) {
-    return c.Nom.charAt(0).toUpperCase() + '. ' + c.Prénom;
-  }
-
-  // Fallback: usar el nombre completo guardado en la sesión (formato "Prénom Nom")
-  // Ej: "Jonathan Gagnon" → "G. Jonathan"
-  // Ej: "Marie-Ann Baron" → "B. Marie-Ann"
-  // Ej: "Charles-Eric Vezina" → "V. Charles-Eric"
-  const parts = fullName.trim().split(' ');
-  if (parts.length >= 2) {
-    const nom = parts[parts.length - 1];        // última palabra = Nom
-    const prenom = parts.slice(0, -1).join(' '); // todo lo anterior = Prénom
-    return nom.charAt(0).toUpperCase() + '. ' + prenom;
-  }
-  return fullName;
-}
-
 // ════════════════════════════
-//  NAVIGATION & UI
+//  UTILS
 // ════════════════════════════
 function showTab(tab) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1806,7 +1246,6 @@ function showTab(tab) {
   document.getElementById('page-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='facture') loadFacture();
-  if(tab==='depenses') renderDepenses();
   if(tab==='clients'){renderClientTable();updateClientCount();}
   if(tab==='resume') loadResume();
 }
@@ -1815,16 +1254,33 @@ function v(id){return document.getElementById(id).value.trim();}
 function round2(n){return Math.round(n*100)/100;}
 function fmtDate(d){
   if(!d) return '—';
-  var s = String(d).trim();
-  // Extract YYYY-MM-DD from any ISO string (handles 2026-04-01T03:00:00.000Z)
-  var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if(iso) return iso[3]+'-'+iso[2]+'-'+iso[1];
-  // DD/MM/YYYY
-  var dmy = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if(dmy) return dmy[1]+'-'+dmy[2]+'-'+dmy[3];
-  return s;
+  var s = String(d);
+  // Handle "Wed Apr 01 2026 00:00:00 GMT-0300..." style dates from Google Sheets
+  if(s.length > 10 && !s.match(/^\d{4}-\d{2}-\d{2}$/)){
+    // Try to extract YYYY-MM-DD from ISO or parse as date
+    var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if(iso) { s = iso[1]+'-'+iso[2]+'-'+iso[3]; }
+    else {
+      // Parse as JS date but use local parts
+      var dt = new Date(d);
+      if(!isNaN(dt)){
+        var y=dt.getFullYear(), mo=String(dt.getMonth()+1).padStart(2,'0'), dy=String(dt.getDate()).padStart(2,'0');
+        s = y+'-'+mo+'-'+dy;
+      }
+    }
+  }
+  var p = s.split('-');
+  return p.length===3 ? p[2]+'-'+p[1]+'-'+p[0] : s;
 }
 
+// Fermer le dropdown client en cliquant ailleurs
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('clientDropdown');
+  var cs = document.getElementById('clientSearch');
+  if (dd && cs && !cs.contains(e.target) && !dd.contains(e.target)) {
+    dd.style.display = 'none';
+  }
+});
 document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');}));
 
 let toastTimer;
@@ -1832,9 +1288,25 @@ function toast(msg,type='success'){
   const el=document.getElementById('toast');
   el.textContent=msg;
   el.style.background=type==='error'?'var(--danger)':type==='warning'?'var(--warning)':'var(--accent)';
-  el.style.transform='translateX(-50%) translateY(0)'; el.style.opacity='1';
+  el.style.transform='translateY(0)';el.style.opacity='1';
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{el.style.transform='translateX(-50%) translateY(80px)';el.style.opacity='0';},3500);
+  toastTimer=setTimeout(()=>{el.style.transform='translateY(80px)';el.style.opacity='0';},3500);
+}
+function getConfidentialName(s) {
+  // Estructura nueva: Prénom y Nom como campos separados
+  if (sess && sess.Nom && sess.Prénom) {
+    return String(sess.Nom).charAt(0).toUpperCase() + '. ' + sess.Prénom;
+  }
+  // Fallback para datos antiguos con campo Client = "Prénom Nom"
+  var fullName = String((sess && sess.Client) || '').trim();
+  if (!fullName) return '—';
+  var parts = fullName.split(' ');
+  if (parts.length >= 2) {
+    var nom = parts[parts.length - 1];
+    var prenom = parts.slice(0, -1).join(' ');
+    return nom.charAt(0).toUpperCase() + '. ' + prenom;
+  }
+  return fullName;
 }
 </script>
 </body>
