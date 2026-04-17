@@ -251,7 +251,7 @@ tbody td { padding: 11px 15px; }
       </div>
 
       <div class="fg">
-        <div style="display:flex;gap:8px;margin-top:4px">
+        <div style="display:flex;gap:8px">
         <button class="btn btn-outline btn-sm" style="flex:1" onclick="openAddClient()">+ Nouveau client</button>
         <button class="btn btn-primary btn-sm" style="flex:2" onclick="saveSession()">💾 Enregistrer</button>
       </div>
@@ -291,7 +291,6 @@ tbody td { padding: 11px 15px; }
           <div class="card-title" style="margin:0" id="todayCardTitle">Sessions d'aujourd'hui</div>
           <span class="badge badge-gold" id="todayCount">0 session(s)</span>
         </div>
-
         <div id="todayList">
           <div class="empty"><div class="empty-ico">📅</div><div class="txt-sm">Aucune session ce jour</div></div>
         </div>
@@ -577,7 +576,6 @@ window.onload = () => {
   loadCfg();
   fillSelectors();
   document.getElementById('sDate').value = today;
-
   document.getElementById('dDate').value = today;
   updatePreview();
   setTarif(150);
@@ -926,9 +924,10 @@ function loadFacture() {
   const netAnnuel=sessAnnee.reduce((a,s)=>a+Number(s.Net),0);
   const expAnnee=depenses.filter(e=>e.date&&e.date.startsWith(String(y)));
   const totalDep=expAnnee.reduce((a,e)=>a+(e.amountDed||0),0);
-  const revImposable=Math.max(0,netAnnuel-totalDep);
-  const taxes=estimarImpuestos(revImposable)+estimarCotizaciones(revImposable);
-  const tauxEff=netAnnuel>0?Math.max(0.35,taxes/netAnnuel):0.35;
+  // Calcul officiel TP-1 2024: 5 composantes (ImpQC+ImpFed+QPP+RQAP+FSS)
+  // Les dépenses TP-80 réduisent le revenu imposable
+  const fiscalAnnuel=calcFiscalComplet(netAnnuel, totalDep);
+  const tauxEff=netAnnuel>0?fiscalAnnuel.total/netAnnuel:0.40;
 
   const numF=`${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
   document.getElementById('invNum').textContent=`Facture # ${numF}`;
@@ -941,11 +940,17 @@ function loadFacture() {
   const totT=sess.reduce((a,s)=>a+Number(s.Tarif),0);
   const totF=sess.reduce((a,s)=>a+Number(s.Frais),0);
   const totN=sess.reduce((a,s)=>a+Number(s.Net),0);
+  const aMettreDecote = round2(totN * tauxEff);
+  const netPoche      = round2(totN - aMettreDecote);
+  const pctAffiche    = (tauxEff*100).toFixed(1);
   document.getElementById('invStats').innerHTML=`
     <div>${sess.length} session(s)</div>
     <div>Total brut : <strong>$${totT.toFixed(2)}</strong></div>
     <div style="color:var(--accent);font-weight:700;margin-top:4px">Net à recevoir : $${totN.toFixed(2)}</div>
-    <div style="color:var(--warning);font-size:11.5px;margin-top:4px">🏦 À mettre de côté : <strong>$${(totN*tauxEff).toFixed(2)}</strong></div>`;
+    <div style="border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;padding-top:8px">
+      <div style="color:var(--warning);font-size:12px">🏦 À mettre de côté (~${pctAffiche}%) : <strong>$${aMettreDecote.toFixed(2)}</strong></div>
+      <div style="color:#86efac;font-size:12px;margin-top:3px">💵 Dans votre poche : <strong>$${netPoche.toFixed(2)}</strong></div>
+    </div>`;
 
   if(!sess.length){document.getElementById('factureContent').innerHTML=`<div class="empty"><div class="empty-ico">📂</div><div class="empty-title">Aucune session pour ${moisStr}</div></div>`;return;}
 
@@ -1172,9 +1177,89 @@ async function deleteDepense(id) {
 // ════════════════════════════════════════════════════════
 //  RÉSUMÉ
 // ════════════════════════════════════════════════════════
-const TAX_BRACKETS=[{max:16452,rate:0},{max:54345,rate:0.2569},{max:108680,rate:0.3612},{max:181440,rate:0.4746},{max:Infinity,rate:0.5331}];
-function estimarImpuestos(r){if(r<=0)return 0;let t=0,prev=0;for(const b of TAX_BRACKETS){if(r>prev)t+=Math.min(r-prev,b.max-prev)*b.rate;prev=b.max;}return t;}
-function estimarCotizaciones(r){if(r<=3500)return 0;return Math.min(r-3500,71100-3500)*0.126+Math.max(0,Math.min(r,85000)-71100)*0.08+Math.min(r,103000)*0.00764;}
+// ════════════════════════════════════════════════════════════════
+//  CALCUL FISCAL OFFICIEL — Revenu Québec + CRA 2024
+//  Sources: TP-1 2024 (ligne 350=$18,056 × 14%), TP-80 2024
+//  5 composantes: Impôt QC + Fédéral + QPP(×2) + RQAP + FSS
+// ════════════════════════════════════════════════════════════════
+
+// Impôt QC 2024 — grille 401 TP-1
+// Crédit perso ligne 350: $18,056 × 14% = $2,527.84
+function calcImpotQC(r){
+  if(r<=0) return 0;
+  const B=[[53255,.14],[106495,.19],[129590,.24],[Infinity,.2575]];
+  let t=0,p=0;
+  for(const[l,v]of B){if(r<=p)break;t+=(Math.min(r,l)-p)*v;p=l;}
+  return Math.max(0,t-18056*.14);
+}
+
+// Impôt fédéral 2024 — T1 CRA
+// Crédit perso: $15,705 × 15% = $2,355.75
+function calcImpotFed(r){
+  if(r<=0) return 0;
+  const B=[[57375,.15],[114750,.205],[158519,.26],[220000,.29],[Infinity,.33]];
+  let t=0,p=0;
+  for(const[l,v]of B){if(r<=p)break;t+=(Math.min(r,l)-p)*v;p=l;}
+  return Math.max(0,t-15705*.15);
+}
+
+// QPP 2024 — Annexe U, TP-1 (ligne 445)
+// Travailleur autonome paie les 2 parts: 12.80% ≤$68,500 + QPP2 8% ≤$73,200
+function calcQPP(r){
+  if(r<=3500) return 0;
+  const t1=Math.max(0,Math.min(r,68500)-3500)*.1280;
+  const t2=Math.max(0,Math.min(r,73200)-68500)*.08;
+  return t1+t2;
+}
+
+// RQAP 2024 — Annexe R, TP-1 (ligne 439)
+// Taux autonome: 0.878% sur max $94,000
+function calcRQAP(r){ return Math.min(r,94000)*.00878; }
+
+// FSS 2024 — Annexe F, TP-1 (ligne 446)
+// Fonds services santé — taux progressif pour travailleur autonome
+function calcFSS(r){
+  if(r<=0) return 0;
+  if(r<=14399) return r*.01;
+  if(r<=55400) return 144+(r-14399)*.0326;
+  return 1481+(r-55400)*.0426;
+}
+
+// CALCUL COMPLET TP-1 2024 — retourne % à mettre de côté + détail
+// revenuNetClinique = sessions × $105 (après 30% clinique, TP-80 ligne 264)
+// depensesDeductibles = total dépenses TP-80 (OPQ, internet, assurance...)
+function calcFiscalComplet(revenuNetClinique, depensesDeductibles){
+  if(revenuNetClinique<=0) return {pct:0,total:0,net:0,detail:{}};
+  depensesDeductibles = depensesDeductibles||0;
+
+  // TP-80 ligne 264: revenu net d'entreprise
+  const revEntreprise = Math.max(0, revenuNetClinique - depensesDeductibles);
+
+  // Cotisations sociales (calculées sur revenu d'entreprise)
+  const qpp  = calcQPP(revEntreprise);
+  const rqap = calcRQAP(revEntreprise);
+  const fss  = calcFSS(revEntreprise);
+
+  // TP-1 ligne 248: déduction 50% QPP → réduit revenu imposable
+  const revImp = Math.max(0, revEntreprise - qpp/2);
+
+  // Impôts sur le revenu imposable
+  const fed = calcImpotFed(revImp);
+  const qc  = calcImpotQC(revImp);
+
+  const total = fed+qc+qpp+rqap+fss;
+  const pct   = Math.round(total/revenuNetClinique*1000)/10;
+  return {
+    pct,
+    total:round2(total),
+    net:round2(revenuNetClinique-total),
+    detail:{fed:round2(fed),qc:round2(qc),qpp:round2(qpp),rqap:round2(rqap),fss:round2(fss)}
+  };
+}
+
+// Compatibilité avec code existant
+function estimarImpuestos(r){ return calcImpotFed(r)+calcImpotQC(r); }
+function estimarCotizaciones(r){ return calcQPP(r)+calcRQAP(r)+calcFSS(r); }
 
 function loadResume() {
   const m=parseInt(document.getElementById('rMois').value);
@@ -1214,6 +1299,100 @@ function loadResume() {
 // ════════════════════════════════════════════════════════
 //  UTILS
 // ════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════
+//  EDIT & DELETE SESSION
+// ════════════════════════════════════════════════════════
+let editingSessionDate = null;
+let editingSessionIdx  = -1;
+
+function editSession(i) {
+  const selDate=document.getElementById('sDate').value||today;
+  const todaySess=sessions.filter(s=>normalizeDate(s.Date_Session)===selDate);
+  const s=todaySess[i];
+  if(!s) return;
+  editingSessionDate=selDate; editingSessionIdx=i;
+  document.getElementById('editDate').value=normalizeDate(s.Date_Session);
+  document.getElementById('editClientName').value=(s.Prénom||'')+' '+(s.Nom||'');
+  document.getElementById('editTarif').value=s.Tarif;
+  document.getElementById('editNotes').value=s.Notes||'';
+  document.getElementById('editPctLbl').textContent=cfg.pct||30;
+  unselectEditTarifBtns();
+  const t=Number(s.Tarif);
+  if(t===120)document.getElementById('et120').classList.add('active');
+  else if(t===140)document.getElementById('et140').classList.add('active');
+  else if(t===150)document.getElementById('et150').classList.add('active');
+  else document.getElementById('etOther').classList.add('active');
+  updateEditPreview();
+  document.getElementById('editSessionModal').classList.add('open');
+}
+
+function setEditTarif(val){
+  unselectEditTarifBtns();
+  const map={120:'et120',140:'et140',150:'et150'};
+  if(map[val])document.getElementById(map[val]).classList.add('active');
+  else document.getElementById('etOther').classList.add('active');
+  if(val>0)document.getElementById('editTarif').value=val;
+  updateEditPreview();
+}
+
+function unselectEditTarifBtns(){
+  ['et120','et140','et150','etOther'].forEach(id=>{var el=document.getElementById(id);if(el)el.classList.remove('active');});
+}
+
+function updateEditPreview(){
+  const t=parseFloat(document.getElementById('editTarif').value)||0,p=cfg.pct||30;
+  if(!t){document.getElementById('editFrais').textContent='—';document.getElementById('editNet').textContent='—';return;}
+  document.getElementById('editFrais').textContent='-$'+round2(t*p/100).toFixed(2);
+  document.getElementById('editNet').textContent='$'+round2(t-round2(t*p/100)).toFixed(2);
+}
+
+async function saveEditSession(){
+  const newDate=document.getElementById('editDate').value;
+  const newTarif=parseFloat(document.getElementById('editTarif').value);
+  const newNotes=document.getElementById('editNotes').value.trim();
+  if(!newDate||!newTarif){toast('⚠️ Date et tarif requis','warning');return;}
+  const selDate=editingSessionDate;
+  const todaySess=sessions.filter(s=>normalizeDate(s.Date_Session)===selDate);
+  const s=todaySess[editingSessionIdx];
+  if(!s){toast('❌ Session introuvable','error');return;}
+  const mainIdx=sessions.findIndex(ms=>normalizeDate(ms.Date_Session)===selDate&&ms.Prénom===s.Prénom&&ms.Nom===s.Nom&&String(ms.Tarif)===String(s.Tarif));
+  if(mainIdx<0){toast('❌ Session introuvable','error');return;}
+  const p=cfg.pct||30,frais=round2(newTarif*p/100),net=round2(newTarif-frais);
+  const parts=newDate.split('-'),mois=MOIS[parseInt(parts[1])-1]+' '+parts[0];
+  const facture=String(parseInt(parts[1])).padStart(2,'0')+'-'+parts[0].slice(-2);
+  const updated={...sessions[mainIdx],Date_Session:newDate,Tarif:newTarif,Frais:frais,Net:net,Mois:mois,Facture:facture,Notes:newNotes};
+  const btn=document.querySelector('#editSessionModal .btn-primary');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span>';}
+  try{
+    if(isDemo||!cfg.scriptUrl){sessions[mainIdx]=updated;toast('✅ Session modifiée (démo)');}
+    else{
+      await callScript('deleteSession',{date:normalizeDate(s.Date_Session),prenom:s.Prénom,nom:s.Nom,tarif:String(s.Tarif)});
+      await callScript('addSession',updated);
+      sessions[mainIdx]=updated;
+      toast('✅ Session modifiée');
+    }
+    closeModal('editSessionModal');
+    loadTodaySessions();
+  }catch(e){toast('❌ '+e.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.innerHTML='💾 Sauvegarder';}}
+}
+
+async function deleteSession(i){
+  const selDate=document.getElementById('sDate').value||today;
+  const todaySess=sessions.filter(s=>normalizeDate(s.Date_Session)===selDate);
+  const s=todaySess[i];
+  if(!s) return;
+  if(!confirm('Supprimer la session de '+(s.Prénom||'')+' '+(s.Nom||'')+' ($'+s.Tarif+') ?')) return;
+  const mainIdx=sessions.findIndex(ms=>normalizeDate(ms.Date_Session)===selDate&&ms.Prénom===s.Prénom&&ms.Nom===s.Nom&&String(ms.Tarif)===String(s.Tarif));
+  try{
+    if(!isDemo&&cfg.scriptUrl) await callScript('deleteSession',{date:normalizeDate(s.Date_Session),prenom:s.Prénom,nom:s.Nom,tarif:String(s.Tarif)});
+    if(mainIdx>=0) sessions.splice(mainIdx,1);
+    toast('🗑️ Session supprimée');
+    loadTodaySessions();
+  }catch(e){if(mainIdx>=0)sessions.splice(mainIdx,1);loadTodaySessions();toast('🗑️ Session supprimée');}
+}
+
 function showTab(tab) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1229,51 +1408,22 @@ function v(id){return document.getElementById(id).value.trim();}
 function round2(n){return Math.round(n*100)/100;}
 function normalizeDate(d){
   if(!d) return '';
-  var s = String(d).trim();
-  // Already YYYY-MM-DD
+  var s=String(d).trim();
   if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  // Extract YYYY-MM-DD from any ISO or long date string
-  // Handles: "Wed Apr 01 2026 00:00:00 GMT-0300..."
-  // Handles: "2026-04-01T03:00:00.000Z"
-  var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  var iso=s.match(/(\d{4})-(\d{2})-(\d{2})/);
   if(iso) return iso[1]+'-'+iso[2]+'-'+iso[3];
-  // Handle "Mon Apr 01 2026..." - extract using month map
-  var longDate = s.match(/([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})/);
-  if(longDate){
-    var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
-                Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
-    var mo = months[longDate[1]] || '01';
-    var dy = longDate[2].padStart(2,'0');
-    return longDate[3]+'-'+mo+'-'+dy;
-  }
+  var m=s.match(/([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})/);
+  if(m){var mo={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};return m[3]+'-'+(mo[m[1]]||'01')+'-'+m[2].padStart(2,'0');}
   return s;
 }
 function fmtDate(d){
   if(!d) return '—';
-  var s = String(d).trim();
-  // Already YYYY-MM-DD
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-    var p=s.split('-'); return p[2]+'-'+p[1]+'-'+p[0];
-  }
-  // Extract YYYY-MM-DD from any ISO or long date string
-  // Handles: "Wed Apr 01 2026 00:00:00 GMT-0300..."
-  // Handles: "2026-04-01T03:00:00.000Z"
-  var iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  var s=String(d).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){var p=s.split('-');return p[2]+'-'+p[1]+'-'+p[0];}
+  var iso=s.match(/(\d{4})-(\d{2})-(\d{2})/);
   if(iso) return iso[3]+'-'+iso[2]+'-'+iso[1];
-  // DD/MM/YYYY
-  var dmy = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if(dmy) return dmy[1]+'-'+dmy[2]+'-'+dmy[3];
-  // Parse as JS Date but extract LOCAL date parts to avoid timezone shift
-  // For "Wed Apr 01 2026..." — use regex to extract month/day/year directly
-  var longDate = s.match(/([A-Za-z]+)\s+(\d{1,2})\s+(\d{4})/);
-  if(longDate){
-    var months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',
-                'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'};
-    var mo = months[longDate[1].substring(0,3)] || '01';
-    var dy = longDate[2].padStart(2,'0');
-    var yr = longDate[3];
-    return dy+'-'+mo+'-'+yr;
-  }
+  var m=s.match(/([A-Za-z]+)\s+(\d{1,2})\s+(\d{4})/);
+  if(m){var mo={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};return m[2].padStart(2,'0')+'-'+(mo[m[1].substring(0,3)]||'01')+'-'+m[3];}
   return s;
 }
 document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');}));
@@ -1286,214 +1436,6 @@ function toast(msg,type='success'){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>{el.style.transform='translateX(-50%) translateY(80px)';el.style.opacity='0';},3500);
 }
-
-// ════════════════════════════════════════════════════════
-//  EDIT & DELETE SESSION
-// ════════════════════════════════════════════════════════
-let editingSessionDate = null;
-let editingSessionIdx  = -1;
-
-function editSession(i) {
-  const selDate = document.getElementById('sDate').value || today;
-  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
-  const s = todaySess[i];
-  if (!s) return;
-
-  editingSessionDate = selDate;
-  editingSessionIdx  = i;
-
-  document.getElementById('editDate').value = normalizeDate(s.Date_Session);
-  document.getElementById('editClientName').value = (s.Prénom||'') + ' ' + (s.Nom||'');
-  document.getElementById('editTarif').value = s.Tarif;
-  document.getElementById('editNotes').value = s.Notes || '';
-  document.getElementById('editPctLbl').textContent = cfg.pct || 30;
-
-  // Highlight tarif button
-  unselectEditTarifBtns();
-  const t = Number(s.Tarif);
-  if (t===120) document.getElementById('et120').classList.add('active');
-  else if (t===140) document.getElementById('et140').classList.add('active');
-  else if (t===150) document.getElementById('et150').classList.add('active');
-  else document.getElementById('etOther').classList.add('active');
-
-  updateEditPreview();
-  document.getElementById('editSessionModal').classList.add('open');
-}
-
-function setEditTarif(val) {
-  unselectEditTarifBtns();
-  const map = {120:'et120', 140:'et140', 150:'et150'};
-  if (map[val]) document.getElementById(map[val]).classList.add('active');
-  else document.getElementById('etOther').classList.add('active');
-  if (val > 0) document.getElementById('editTarif').value = val;
-  updateEditPreview();
-}
-
-function unselectEditTarifBtns() {
-  ['et120','et140','et150','etOther'].forEach(id => {
-    var el = document.getElementById(id);
-    if (el) el.classList.remove('active');
-  });
-}
-
-function updateEditPreview() {
-  const t = parseFloat(document.getElementById('editTarif').value) || 0;
-  const p = cfg.pct || 30;
-  if (!t) {
-    document.getElementById('editFrais').textContent = '—';
-    document.getElementById('editNet').textContent = '—';
-    return;
-  }
-  const frais = round2(t * p / 100);
-  const net   = round2(t - frais);
-  document.getElementById('editFrais').textContent = '-$' + frais.toFixed(2);
-  document.getElementById('editNet').textContent   = '$'  + net.toFixed(2);
-}
-
-async function saveEditSession() {
-  const newDate  = document.getElementById('editDate').value;
-  const newTarif = parseFloat(document.getElementById('editTarif').value);
-  const newNotes = document.getElementById('editNotes').value.trim();
-
-  if (!newDate || !newTarif) { toast('⚠️ Date et tarif requis', 'warning'); return; }
-
-  const selDate  = editingSessionDate;
-  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
-  const s = todaySess[editingSessionIdx];
-  if (!s) { toast('❌ Session introuvable', 'error'); return; }
-
-  // Find in main sessions array
-  const mainIdx = sessions.findIndex(ms =>
-    normalizeDate(ms.Date_Session) === selDate &&
-    ms.Prénom === s.Prénom &&
-    ms.Nom    === s.Nom &&
-    String(ms.Tarif) === String(s.Tarif)
-  );
-  if (mainIdx < 0) { toast('❌ Session introuvable', 'error'); return; }
-
-  const p      = cfg.pct || 30;
-  const frais  = round2(newTarif * p / 100);
-  const net    = round2(newTarif - frais);
-  const parts  = newDate.split('-');
-  const dMonth = parseInt(parts[1]) - 1;
-  const mois   = MOIS[dMonth] + ' ' + parts[0];
-  const facture = String(dMonth+1).padStart(2,'0') + '-' + parts[0].slice(-2);
-
-  const updated = {
-    ...sessions[mainIdx],
-    Date_Session: newDate,
-    Tarif: newTarif,
-    Frais: frais,
-    Net: net,
-    Mois: mois,
-    Facture: facture,
-    Notes: newNotes
-  };
-
-  const btn = document.querySelector('#editSessionModal .btn-primary');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
-
-  try {
-    if (isDemo || !cfg.scriptUrl) {
-      sessions[mainIdx] = updated;
-      toast('✅ Session modifiée (démo)');
-    } else {
-      // Delete old + add new in Sheets
-      await callScript('deleteSession', {
-        date:   normalizeDate(s.Date_Session),
-        prenom: s.Prénom,
-        nom:    s.Nom,
-        tarif:  String(s.Tarif)
-      });
-      await callScript('addSession', updated);
-      sessions[mainIdx] = updated;
-      toast('✅ Session modifiée dans Google Sheets');
-    }
-    closeModal('editSessionModal');
-    loadTodaySessions();
-  } catch(e) {
-    toast('❌ ' + e.message, 'error');
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Sauvegarder'; }
-  }
-}
-
-async function deleteSession(i) {
-  const selDate   = document.getElementById('sDate').value || today;
-  const todaySess = sessions.filter(s => normalizeDate(s.Date_Session) === selDate);
-  const s = todaySess[i];
-  if (!s) return;
-
-  const name = (s.Prénom||'') + ' ' + (s.Nom||'');
-  if (!confirm('Supprimer la session de ' + name + ' ($' + s.Tarif + ') ?')) return;
-
-  const mainIdx = sessions.findIndex(ms =>
-    normalizeDate(ms.Date_Session) === selDate &&
-    ms.Prénom === s.Prénom &&
-    ms.Nom    === s.Nom &&
-    String(ms.Tarif) === String(s.Tarif)
-  );
-
-  try {
-    if (!isDemo && cfg.scriptUrl) {
-      await callScript('deleteSession', {
-        date:   normalizeDate(s.Date_Session),
-        prenom: s.Prénom,
-        nom:    s.Nom,
-        tarif:  String(s.Tarif)
-      });
-    }
-    if (mainIdx >= 0) sessions.splice(mainIdx, 1);
-    toast('🗑️ Session supprimée');
-    loadTodaySessions();
-  } catch(e) {
-    // Remove from memory even if Sheets fails
-    if (mainIdx >= 0) sessions.splice(mainIdx, 1);
-    loadTodaySessions();
-    toast('🗑️ Session supprimée (sync recommandée)');
-  }
-}
-
 </script>
-
-<!-- ══ MODAL: ÉDITER SESSION ══ -->
-<div class="mbg" id="editSessionModal">
-<div class="modal">
-  <div class="modal-title">✏️ Modifier la session</div>
-  <input type="hidden" id="editSessionIdx">
-  <div class="fg">
-    <label class="fl">Date de la session</label>
-    <input type="date" class="fc" id="editDate">
-  </div>
-  <div class="fg">
-    <label class="fl">Client</label>
-    <input type="text" class="fc" id="editClientName" readonly style="background:#f5f5f5;color:#555">
-    <div class="txt-xs txt-muted mt12">Pour changer le client, borre cette session et créez-en une nouvelle.</div>
-  </div>
-  <div class="fg">
-    <label class="fl">Tarif ($)</label>
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button class="tbtn" onclick="setEditTarif(120)" id="et120">$120</button>
-      <button class="tbtn" onclick="setEditTarif(140)" id="et140">$140</button>
-      <button class="tbtn" onclick="setEditTarif(150)" id="et150">$150</button>
-      <button class="tbtn" onclick="setEditTarif(0)" id="etOther">Autre</button>
-    </div>
-    <input type="number" class="fc" id="editTarif" min="0" step="5" oninput="updateEditPreview();unselectEditTarifBtns()">
-  </div>
-  <div class="fg">
-    <label class="fl">Notes</label>
-    <input type="text" class="fc" id="editNotes">
-  </div>
-  <!-- Preview -->
-  <div class="preview" style="margin-bottom:16px">
-    <div class="preview-row"><span class="lbl">Frais clinique (<span id="editPctLbl">30</span>%)</span><span id="editFrais" class="c-red">—</span></div>
-    <div class="preview-row"><span class="lbl">✅ Net à recevoir</span><span id="editNet" class="c-green">—</span></div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-secondary" onclick="closeModal('editSessionModal')">Annuler</button>
-    <button class="btn btn-primary" onclick="saveEditSession()">💾 Sauvegarder</button>
-  </div>
-</div>
-</div>
 </body>
 </html>
