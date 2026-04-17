@@ -940,6 +940,13 @@ function loadFacture() {
   const totT=sess.reduce((a,s)=>a+Number(s.Tarif),0);
   const totF=sess.reduce((a,s)=>a+Number(s.Frais),0);
   const totN=sess.reduce((a,s)=>a+Number(s.Net),0);
+  // ===== TASA REAL =====
+const revenuAnnuel = totN * 12;
+
+let tauxEff = 0.39;
+
+if (revenuAnnuel > 100000) tauxEff = 0.40;
+if (revenuAnnuel < 80000) tauxEff = 0.37;
   const aMettreDecote = round2(totN * tauxEff);
   const netPoche      = round2(totN - aMettreDecote);
   const pctAffiche    = (tauxEff*100).toFixed(1);
@@ -963,7 +970,7 @@ function loadFacture() {
       <td>$${Number(s.Tarif).toFixed(2)}</td>
       <td class="c-red">-$${Number(s.Frais).toFixed(2)}</td>
       <td class="c-green fw6">$${Number(s.Net).toFixed(2)}</td>
-      <td style="color:var(--warning);background:#fffbeb">-$${(Number(s.Net)*tauxEff).toFixed(2)}</td>
+      <td style="color:var(--warning);background:#fffbeb">-$${(Number(s.Net) * (revenuAnnuel > 100000 ? 0.40 : revenuAnnuel < 80000 ? 0.37 : 0.39)).toFixed(2)}</td>
     </tr>`).join('')}</tbody>
     <tfoot><tr>
       <td class="tfoot" colspan="2">TOTAL — ${sess.length} sessions</td>
