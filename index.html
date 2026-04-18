@@ -899,13 +899,14 @@ async function syncData() {
     const d=await callScript('getDepenses');
     depenses=(d.data||[]).map(e=>({
       ...e,
-      // Normaliser les clés — le Sheet peut retourner "Date" ou "date"
-      date: e.date || e.Date || '',
-      category: e.category || e.Categorie || e.Category || '',
-      pctDed: Number(e.pctDed || e.PctDed) || 100,
+      // Normaliser TOUTES les clés — Sheet retourne Date/Categorie/MontantTotal/MontantDed
+      id:          e.id || e.Id || '',
+      date:        e.date || e.Date || '',
+      category:    e.category || e.Categorie || e.Category || '',
+      pctDed:      Number(e.pctDed || e.PctDed) || 100,
       amountTotal: Number(e.amountTotal || e.MontantTotal) || 0,
-      amountDed: Number(e.amountDed || e.MontantDed) || 0,
-      notes: e.notes || e.Notes || ''
+      amountDed:   Number(e.amountDed || e.MontantDed) || 0,
+      notes:       e.notes || e.Notes || ''
     }));
     renderClientTable(); loadTodaySessions(); updateClientCount(); renderDepenses();
     const now=new Date();
@@ -1183,7 +1184,7 @@ function renderClientTable() {
     const cnt=sessions.filter(s=>(s.Prénom===c.Prénom&&s.Nom===c.Nom)||(s.Client===`${c.Prénom} ${c.Nom}`)).length;
     return `<tr>
       <td><strong>${c.Prénom}</strong></td><td>${c.Nom}</td>
-      <td>${c.Téléphone||'—'}</td><td>${c.Date_Naissance||'—'}</td><td>${c.Date_Appel||'—'}</td>
+      <td>${c.Téléphone||'—'}</td><td>${fmtDate(c.Date_Naissance)||'—'}</td><td>${fmtDate(c.Date_Appel)||'—'}</td>
       <td><span class="badge ${c.Actif==='Oui'?'badge-green':'badge-gray'}">${c.Actif==='Oui'?'Actif':'Inactif'}</span></td>
       <td><span class="badge badge-gold">${cnt}</span></td>
       <td><button class="btn btn-danger" onclick="confirmDeleteClient('${c.id}','${c.Prénom} ${c.Nom}')">✕</button></td>
