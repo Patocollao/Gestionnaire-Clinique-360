@@ -920,18 +920,10 @@ function loadFacture() {
   const moisStr=`${MOIS[m-1]} ${y}`;
   const sess=sessions.filter(s=>s.Mois===moisStr);
 
-  const sessAnnee=sessions.filter(s=>s.Mois&&s.Mois.includes(String(y)));
-  const netAnnuel=sessAnnee.reduce((a,s)=>a+Number(s.Net),0);
-  const expAnnee=depenses.filter(e=>e.date&&e.date.startsWith(String(y)));
-  const totalDep=expAnnee.reduce((a,e)=>a+(e.amountDed||0),0);
-  // Calcul officiel TP-1 2024 — IMPORTANT: on projette le revenu annuel
-  // sur base du mois sélectionné × 12 pour obtenir un taux fiscal réaliste.
-  // Sinon avec 1 seul mois enregistré le % serait faussement bas (~5%).
-  const totNmois=sess.reduce((a,s)=>a+Number(s.Net),0);
-  const netProjetteAnnuel = totNmois > 0 ? totNmois * 12 : (netAnnuel > 0 ? netAnnuel * (12 / Math.max(1, new Set(sessAnnee.map(s=>s.Mois)).size)) : 0);
-  const depProjetteesAnnuel = totalDep > 0 ? totalDep : 0;
-  const fiscalAnnuel = calcFiscalComplet(Math.max(netAnnuel, netProjetteAnnuel), depProjetteesAnnuel);
-  const tauxEff = netProjetteAnnuel > 0 ? fiscalAnnuel.total / Math.max(netAnnuel, netProjetteAnnuel) : 0.40;
+  // Taux fiscal fixe 40% — basé sur calcul officiel TP-1 2024
+  // (ImpQC + ImpFed + QPP×2 + RQAP + FSS) pour 16-20 patients/semaine
+  // Taux réel calculé: ~39-40%. On utilise 40% comme provision prudente.
+  const tauxEff = 0.40;
 
   const numF=`${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
   document.getElementById('invNum').textContent=`Facture # ${numF}`;
@@ -952,13 +944,13 @@ function loadFacture() {
     <div>Total brut : <strong>$${totT.toFixed(2)}</strong></div>
     <div style="color:var(--accent);font-weight:700;margin-top:4px">Net à recevoir : $${totN.toFixed(2)}</div>
     <div style="border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;padding-top:8px">
-      <div style="color:var(--warning);font-size:12px">🏦 À mettre de côté (~${pctAffiche}%) : <strong>$${aMettreDecote.toFixed(2)}</strong></div>
+      <div style="color:var(--warning);font-size:12px">🏦 À mettre de côté (~40%, TP-1 2024) : <strong>$${aMettreDecote.toFixed(2)}</strong></div>
       <div style="color:#86efac;font-size:12px;margin-top:3px">💵 Dans votre poche : <strong>$${netPoche.toFixed(2)}</strong></div>
     </div>`;
 
   if(!sess.length){document.getElementById('factureContent').innerHTML=`<div class="empty"><div class="empty-ico">📂</div><div class="empty-title">Aucune session pour ${moisStr}</div></div>`;return;}
 
-  const pctDisp=(tauxEff*100).toFixed(1);
+  const pctDisp='40.0';
   document.getElementById('factureContent').innerHTML=`<div class="tw"><table>
     <thead><tr><th>Date</th><th>Client (Loi 25)</th><th>Tarif</th><th>Frais (${cfg.pct||30}%)</th><th>Net</th><th>🏦 À garder (≈${pctDisp}%)</th></tr></thead>
     <tbody>${sess.map(s=>`<tr>
