@@ -531,6 +531,16 @@ tbody td { padding: 11px 15px; }
         </div>
       </div>
 
+      <div class="fg" style="background:var(--surface2);border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:4px">
+        <label class="fl" style="color:var(--accent)">📊 Ou entrez vos sessions réelles / mois</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="number" class="fc" id="sSessionsMois" placeholder="Ex: 43" min="0" step="1"
+            oninput="onSessionsMoisInput()" style="flex:1">
+          <span class="txt-sm txt-muted" style="white-space:nowrap">sess/mois</span>
+        </div>
+        <div class="txt-xs txt-muted mt12" id="sSessionsMoisInfo" style="display:none"></div>
+      </div>
+
       <div class="fg">
         <label class="fl">Dépenses déductibles / an ($) <span class="txt-xs txt-muted">(OPQ, internet, assurance...)</span></label>
         <input type="number" class="fc" id="sDepenses" value="3000" min="0" step="500" oninput="simuler()">
@@ -899,9 +909,9 @@ async function syncData() {
     const d=await callScript('getDepenses');
     depenses=(d.data||[]).map(e=>({
       ...e,
-      // Normaliser TOUTES les clés — Sheet retourne Date/Categorie/MontantTotal/MontantDed
+      // Normaliser TOUTES les clés + convertir date au format YYYY-MM-DD
       id:          e.id || e.Id || '',
-      date:        e.date || e.Date || '',
+      date:        normalizeDate(e.date || e.Date || ''),
       category:    e.category || e.Categorie || e.Category || '',
       pctDed:      Number(e.pctDed || e.PctDed) || 100,
       amountTotal: Number(e.amountTotal || e.MontantTotal) || 0,
@@ -1550,6 +1560,34 @@ function unselectStratTarifBtns(){
   ['st120','st140','st150','st175'].forEach(id=>{var el=document.getElementById(id);if(el)el.classList.remove('active');});
 }
 
+function onSessionsMoisInput() {
+  const sessM = parseFloat(document.getElementById('sSessionsMois').value);
+  const prix  = parseFloat(document.getElementById('sPrix').value)||150;
+  const pctClin = (parseFloat(document.getElementById('sPctClinique').value)||30)/100;
+  const sem   = parseFloat(document.getElementById('sSemainesNum').value)||48;
+
+  if (!sessM || sessM <= 0) {
+    document.getElementById('sSessionsMoisInfo').style.display='none';
+    return;
+  }
+
+  // Calculer patients/semaine depuis sessions/mois
+  const sessAn  = sessM * 12;
+  const pacSem  = sessAn / sem;
+
+  // Mettre à jour le slider patients
+  document.getElementById('sPatientsNum').value   = pacSem.toFixed(1);
+  document.getElementById('sPatientsRange').value = Math.round(pacSem);
+
+  // Afficher info
+  const netMois = sessM * prix * (1 - pctClin);
+  document.getElementById('sSessionsMoisInfo').style.display = '';
+  document.getElementById('sSessionsMoisInfo').innerHTML =
+    `${sessM} sessions × $${(prix*(1-pctClin)).toFixed(0)} net = <strong>$${netMois.toFixed(0)}/mois</strong> · ~${pacSem.toFixed(1)} patients/semaine`;
+
+  simuler();
+}
+
 function simuler() {
   const prix     = parseFloat(document.getElementById('sPrix').value)||150;
   const pctClin  = (parseFloat(document.getElementById('sPctClinique').value)||30)/100;
@@ -1568,7 +1606,8 @@ function simuler() {
 
   // KPIs
   document.getElementById('skNetAn').textContent    = '$'+netClin.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-  document.getElementById('skNetAnSub').textContent  = '$'+(netClin/12).toFixed(0)+'/mois · $'+(netClin/semaines).toFixed(0)+'/sem';
+  const sessParMois = patients * semaines / 12;
+  document.getElementById('skNetAnSub').textContent  = '$'+(netClin/12).toFixed(0)+'/mois · '+sessParMois.toFixed(0)+' sessions/mois';
   document.getElementById('skImpots').textContent   = '-$'+fiscal.total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
   document.getElementById('skImpotsP').textContent  = fiscal.pct.toFixed(1)+'% du net clinique';
   document.getElementById('skPoche').textContent    = '$'+poche.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
