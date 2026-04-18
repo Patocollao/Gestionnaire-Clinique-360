@@ -453,6 +453,10 @@ tbody td { padding: 11px 15px; }
     <div class="stat"><div class="stat-ico">💵</div><div class="stat-lbl">Dans vos poches</div><div class="stat-val c-green" id="stReal">—</div><div class="stat-sub">Net après tout</div></div>
   </div>
   <div class="alert alert-info">💡 Les impôts sont estimés avec le <strong>taux annuel projeté</strong> (TP-1 2024 : QC + Fédéral + QPP + RQAP + FSS). Basé sur le mois sélectionné × 12 si peu de mois sont enregistrés.</div>
+  <div class="card mb20" id="depEconomieCard" style="display:none">
+    <div class="card-title" style="font-size:16px">💡 Économie fiscale de vos dépenses</div>
+    <div id="depEconomieContent"></div>
+  </div>
   <div class="g2">
     <div class="card"><div class="card-title">Clients fréquents</div><div class="card-sub">Ce mois</div><div id="topClients"></div></div>
     <div class="card"><div class="card-title">Répartition par tarif</div><div class="card-sub">Sessions par tarif</div><div id="tarifBreak"></div></div>
@@ -461,18 +465,83 @@ tbody td { padding: 11px 15px; }
 
 <!-- ══ AIDE ══ -->
 <div class="page" id="page-aide">
+
+  <!-- SECTION: Taux 40% -->
+  <div class="card aide-sec mb20">
+    <h3>🏦 Pourquoi 40% — La règle de provision fiscale</h3>
+    <p>La facture mensuelle affiche toujours <strong>40% à mettre de côté</strong>. Voici pourquoi ce chiffre a été choisi et comment il a été calculé.</p>
+
+    <h4>Base de calcul — Formulaires officiels TP-1 2024</h4>
+    <p>Le taux de 40% est basé sur le calcul officiel de <strong>5 composantes</strong> selon les formulaires Revenu Québec et CRA :</p>
+    <ul>
+      <li><strong>Impôt provincial QC</strong> — Grille 401, TP-1 2024. Tramos : 14% ≤$53,255 · 19% ≤$106,495 · 24% ≤$129,590 · 25.75% au-delà. Crédit personnel de base : $18,056 × 14% = $2,528 (ligne 350).</li>
+      <li><strong>Impôt fédéral</strong> — T1 CRA 2024. Tramos : 15% ≤$57,375 · 20.5% ≤$114,750 · 26% ≤$158,519. Crédit personnel : $15,705 × 15% = $2,356.</li>
+      <li><strong>QPP × 2</strong> — Annexe U, TP-1. Travailleur autonome paie la part employeur ET employé : 12.80% sur revenus entre $3,500 et $68,500 + QPP2 8% jusqu'à $73,200.</li>
+      <li><strong>RQAP</strong> — Annexe R, TP-1. Assurance parentale : 0.878% sur max $94,000.</li>
+      <li><strong>FSS</strong> — Annexe F, TP-1. Fonds services de santé : taux progressif de 1% à 4.26%.</li>
+    </ul>
+
+    <h4>Résultats calculés pour 16–20 patients/semaine (48 semaines)</h4>
+    <div class="tw" style="margin:12px 0">
+      <table>
+        <thead><tr><th>Patients/sem</th><th>Net clinique/an</th><th>Total fiscal</th><th>Taux réel</th><th>Dans la poche</th></tr></thead>
+        <tbody>
+          <tr><td>16</td><td>$80,640</td><td>$31,394</td><td><strong>38.9%</strong></td><td>$49,246</td></tr>
+          <tr><td>18</td><td>$90,720</td><td>$35,893</td><td><strong>39.6%</strong></td><td>$54,827</td></tr>
+          <tr><td>20</td><td>$100,800</td><td>$40,333</td><td><strong>40.0%</strong></td><td>$60,467</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Pourquoi 40% fixe et non le taux calculé dynamiquement ?</h4>
+    <p>Nous avons testé le calcul dynamique mais il posait un problème important : avec seulement 1 ou 2 mois enregistrés, le revenu annuel projeté est faible et le taux fiscal calculé tombe à <strong>5–10%</strong> — ce qui est dangereux car il suggère de mettre trop peu de côté.</p>
+    <p>Le <strong>40% fixe</strong> est le choix le plus prudent car :</p>
+    <ul>
+      <li>Il couvre le scénario de 20 patients/sem (taux réel exactement 40.0%)</li>
+      <li>Pour 16–18 patients il est légèrement conservateur (38.9–39.6%) — vous mettrez un peu plus de côté, ce qui est préférable à pas assez</li>
+      <li>Il est stable et prévisible — la même règle chaque mois</li>
+      <li>Les dépenses déductibles (TP-80) réduisent le taux réel en dessous de 40%, créant un coussin de sécurité</li>
+    </ul>
+    <div class="alert alert-success">✅ <strong>Règle pratique :</strong> Sur chaque paiement reçu de la clinique ($105/session), mettez <strong>$42</strong> de côté pour les impôts et cotisations. Le reste ($63) est réellement disponible.</div>
+    <div class="alert alert-warning">⚠️ <strong>Note :</strong> Ce taux ne tient pas compte de déductions supplémentaires (REER, frais de garde, etc.) qui pourraient le réduire. Pour une planification fiscale complète, consultez un comptable.</div>
+
+    <h4>Vérifiez vous-même avec la pestaña Stratégie</h4>
+    <p>La pestaña <strong>🎯 Stratégie</strong> utilise le même calcul TP-1 2024 mais de façon dynamique sur un revenu annuel complet. Entrez 48 semaines et votre nombre réel de patients pour voir votre taux fiscal personnalisé.</p>
+  </div>
+
+  <!-- SECTION: Dépenses -->
+  <div class="card aide-sec mb20">
+    <h3>💳 Comment fonctionnent les dépenses déductibles</h3>
+    <p>Les dépenses professionnelles (formulaire <strong>TP-80</strong>) réduisent votre revenu imposable. Chaque dollar dépensé professionnellement vous économise environ <strong>50–55 cents</strong> en impôts (selon votre taux marginal combiné QC + Fédéral).</p>
+    <h4>Dépenses typiques d'un psychologue autonome au Québec</h4>
+    <ul>
+      <li><strong>OPQ</strong> — Cotisation à l'Ordre des psychologues (~$950/an) · 100% déductible</li>
+      <li><strong>Assurance responsabilité</strong> — (~$130/an) · 100% déductible</li>
+      <li><strong>Logiciel gestion patients</strong> — (Jane, Psylio, etc.) · 100% déductible</li>
+      <li><strong>Formation continue</strong> — cours, congrès, supervision · 100% déductible</li>
+      <li><strong>Téléphone cellulaire</strong> — portion professionnelle (~50%) · déductible au prorata</li>
+      <li><strong>Internet résidentiel</strong> — portion professionnelle (~30%) · déductible au prorata</li>
+      <li><strong>Bureau à domicile</strong> — loyer ou hypothèque proportionnel · déductible au prorata</li>
+    </ul>
+    <p>La pestaña <strong>💳 Dépenses</strong> enregistre chaque dépense dans Google Sheets et le <strong>📊 Résumé</strong> calcule automatiquement l'économie fiscale réelle.</p>
+  </div>
+
+  <!-- SECTION: Google Sheets -->
   <div class="card aide-sec mb20">
     <h3>☁️ Guide de connexion Google Sheets</h3>
     <h4>Structure des feuilles requises</h4>
     <p><strong>Feuille "Clients"</strong> — Colonnes (A à H) :</p>
     <pre>id | Prénom | Nom | Téléphone | Date_Naissance | Date_Appel | Sexe | Actif</pre>
-    <p><strong>Feuille "Sessions"</strong> — Colonnes (A à I) — <em>nouvelle structure v3</em> :</p>
+    <p><strong>Feuille "Sessions"</strong> — Colonnes (A à I) :</p>
     <pre>Date_Session | Prénom | Nom | Tarif | Frais | Net | Mois | Facture | Notes</pre>
     <p><strong>Feuille "Depenses"</strong> — Colonnes (A à G) :</p>
     <pre>id | date | category | pctDed | amountTotal | amountDed | notes</pre>
-    <h4>Apps Script</h4>
-    <p>Collez le code du fichier <strong>Code_Apps_Script_v3.js</strong> dans Extensions → Apps Script. Créez un <strong>Nouveau déploiement</strong> (App web, accès : Tous les utilisateurs).</p>
+    <h4>Apps Script v4</h4>
+    <p>Collez le code <strong>Code_Apps_Script_v4.js</strong> dans Extensions → Apps Script. Créez un <strong>Nouveau déploiement</strong> → App web → Accès : Tous les utilisateurs. Copiez l'URL dans ⚙️ Config.</p>
+    <h4>Mise à jour du script</h4>
+    <p>Si vous modifiez le script, allez dans <strong>Implémenter → Administrer les déploiements → ✏️ → Nouvelle version → Implémenter</strong>. Puis mettez à jour l'URL dans ⚙️ Config et faites 🔄 Synchroniser.</p>
   </div>
+
 </div>
 
 
@@ -1429,6 +1498,38 @@ function loadResume() {
   document.getElementById('stDepenses').textContent=totalDep>0?`-$${totalDep.toFixed(0)}`:'—';
   document.getElementById('stTaxes').textContent=taxesReelles>0?`-$${taxesReelles.toFixed(0)}`:'—';
   document.getElementById('stReal').textContent=revReel>0?`$${revReel.toFixed(0)}`:'—';
+
+  // Calcul de l'économie fiscale réelle des dépenses
+  if(totalDep>0 && netAnnuel>0) {
+    const fiscalSansDep = calcFiscalComplet(baseCalcFiscal, 0);
+    const fiscalAvecDep = calcFiscalComplet(baseCalcFiscal, totalDep);
+    const economieFiscale = round2(fiscalSansDep.total - fiscalAvecDep.total);
+    const pctEconomie = round2(economieFiscale / totalDep * 100);
+    const economieParMois = round2(economieFiscale / 12);
+
+    document.getElementById('depEconomieCard').style.display='';
+    document.getElementById('depEconomieContent').innerHTML=`
+      <div class="g2" style="gap:12px;margin-bottom:16px">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Économie fiscale / an</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--accent)">$${economieFiscale.toFixed(0)}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">$${economieParMois.toFixed(0)}/mois</div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Pour chaque $100 dépensé</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--accent)">$${pctEconomie.toFixed(0)}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">récupérés en impôts</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;background:var(--surface2);padding:12px;border-radius:var(--radius-sm)">
+        <strong>Comment ça marche :</strong> Vos $${totalDep.toFixed(0)} de dépenses déductibles (TP-80) réduisent votre revenu imposable de $${totalDep.toFixed(0)}.
+        Sans ces dépenses, vous paieriez <span style="color:var(--danger)">$${fiscalSansDep.total.toFixed(0)}</span> d'impôts.
+        Avec elles, vous payez <span style="color:var(--accent)">$${fiscalAvecDep.total.toFixed(0)}</span> — une économie réelle de <strong>$${economieFiscale.toFixed(0)}</strong>.
+        Votre taux marginal combiné est d'environ <strong>${pctEconomie.toFixed(0)}%</strong> — chaque dollar dépensé professionnellement vous en rapporte ${(pctEconomie/100).toFixed(2)} en moins d'impôts.
+      </div>`;
+  } else {
+    document.getElementById('depEconomieCard').style.display='none';
+  }
 
   const freq={};
   sessMois.forEach(s=>{const k=`${s.Prénom||''} ${s.Nom||s.Client||''}`.trim();freq[k]=(freq[k]||0)+1;});
