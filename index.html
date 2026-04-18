@@ -212,6 +212,7 @@ tbody td { padding: 11px 15px; }
   <div class="tab" onclick="showTab('depenses')" id="tab-depenses">💳 Dépenses</div>
   <div class="tab" onclick="showTab('clients')" id="tab-clients">👥 Clients</div>
   <div class="tab" onclick="showTab('resume')" id="tab-resume">📊 Résumé</div>
+  <div class="tab" onclick="showTab('strategie')" id="tab-strategie">🎯 Stratégie</div>
   <div class="tab" onclick="showTab('aide')" id="tab-aide">❓ Aide</div>
 </div>
 
@@ -471,6 +472,97 @@ tbody td { padding: 11px 15px; }
     <pre>id | date | category | pctDed | amountTotal | amountDed | notes</pre>
     <h4>Apps Script</h4>
     <p>Collez le code du fichier <strong>Code_Apps_Script_v3.js</strong> dans Extensions → Apps Script. Créez un <strong>Nouveau déploiement</strong> (App web, accès : Tous les utilisateurs).</p>
+  </div>
+</div>
+
+
+<!-- ══ STRATÉGIE ══ -->
+<div class="page" id="page-strategie">
+  <div class="flex jsb aic mb20" style="flex-wrap:wrap;gap:12px">
+    <div>
+      <h2 class="serif" style="font-size:23px">🎯 Simulateur stratégique</h2>
+      <div class="txt-sm txt-muted mt12">Simulez différents scénarios pour optimiser vos revenus</div>
+    </div>
+  </div>
+
+  <div class="g2" style="align-items:start">
+    <!-- Formulaire -->
+    <div class="card">
+      <div class="card-title">Paramètres</div>
+      <div class="card-sub">Ajustez les valeurs pour simuler votre situation</div>
+
+      <div class="fg">
+        <label class="fl">Prix par session ($)</label>
+        <div class="tarif-btns" style="margin-bottom:8px">
+          <button class="tbtn" onclick="setStratTarif(120)" id="st120">$120</button>
+          <button class="tbtn" onclick="setStratTarif(140)" id="st140">$140</button>
+          <button class="tbtn active" onclick="setStratTarif(150)" id="st150">$150</button>
+          <button class="tbtn" onclick="setStratTarif(175)" id="st175">$175</button>
+        </div>
+        <input type="number" class="fc" id="sPrix" value="150" min="50" step="5" oninput="unselectStratTarifBtns();simuler()">
+      </div>
+
+      <div class="fg">
+        <label class="fl">% Frais clinique</label>
+        <input type="number" class="fc" id="sPctClinique" value="30" min="0" max="60" step="5" oninput="simuler()">
+      </div>
+
+      <div class="fg">
+        <label class="fl">Patients par semaine</label>
+        <div style="display:flex;align-items:center;gap:12px">
+          <input type="range" id="sPatientsRange" min="5" max="30" value="18" step="1"
+            oninput="document.getElementById('sPatientsNum').value=this.value;simuler()"
+            style="flex:1;accent-color:var(--accent)">
+          <input type="number" id="sPatientsNum" value="18" min="5" max="30"
+            oninput="document.getElementById('sPatientsRange').value=this.value;simuler()"
+            style="width:70px;padding:8px">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Semaines travaillées / an</label>
+        <div style="display:flex;align-items:center;gap:12px">
+          <input type="range" id="sSemainesRange" min="20" max="52" value="48" step="1"
+            oninput="document.getElementById('sSemainesNum').value=this.value;simuler()"
+            style="flex:1;accent-color:var(--accent)">
+          <input type="number" id="sSemainesNum" value="48" min="20" max="52"
+            oninput="document.getElementById('sSemainesRange').value=this.value;simuler()"
+            style="width:70px;padding:8px">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Dépenses déductibles / an ($) <span class="txt-xs txt-muted">(OPQ, internet, assurance...)</span></label>
+        <input type="number" class="fc" id="sDepenses" value="3000" min="0" step="500" oninput="simuler()">
+      </div>
+
+      <div class="alert alert-info" style="margin-top:4px">
+        💡 Calcul basé sur <strong>TP-1 2024</strong> officiel — 5 composantes : Impôt QC + Fédéral + QPP + RQAP + FSS
+      </div>
+    </div>
+
+    <!-- Résultats -->
+    <div>
+      <!-- KPIs principaux -->
+      <div class="g2 mb20" id="stratKpis">
+        <div class="stat"><div class="stat-ico">💰</div><div class="stat-lbl">Net clinique / an</div><div class="stat-val" id="skNetAn">—</div><div class="stat-sub" id="skNetAnSub">—</div></div>
+        <div class="stat"><div class="stat-ico">🏛️</div><div class="stat-lbl">Impôts + cotisations</div><div class="stat-val c-red" id="skImpots">—</div><div class="stat-sub" id="skImpotsP">—</div></div>
+        <div class="stat"><div class="stat-ico">💵</div><div class="stat-lbl">Dans votre poche / an</div><div class="stat-val c-green" id="skPoche">—</div><div class="stat-sub" id="skPocheMois">—</div></div>
+        <div class="stat"><div class="stat-ico">⏱️</div><div class="stat-lbl">$/heure effectif</div><div class="stat-val" id="skHeure">—</div><div class="stat-sub">après impôts</div></div>
+      </div>
+
+      <!-- Décomposition fiscale -->
+      <div class="card mb20">
+        <div class="card-title">Décomposition fiscale</div>
+        <div id="stratFiscal"></div>
+      </div>
+
+      <!-- Lecture stratégique -->
+      <div class="card">
+        <div class="card-title">Lecture stratégique</div>
+        <div id="stratLecture"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1389,6 +1481,99 @@ async function deleteSession(i){
   }catch(e){if(mainIdx>=0)sessions.splice(mainIdx,1);loadTodaySessions();toast('🗑️ Session supprimée');}
 }
 
+
+// ════════════════════════════════════════════════════════
+//  SIMULATEUR STRATÉGIQUE
+// ════════════════════════════════════════════════════════
+function setStratTarif(val) {
+  unselectStratTarifBtns();
+  const map={120:'st120',140:'st140',150:'st150',175:'st175'};
+  if(map[val]) document.getElementById(map[val]).classList.add('active');
+  document.getElementById('sPrix').value=val;
+  simuler();
+}
+function unselectStratTarifBtns(){
+  ['st120','st140','st150','st175'].forEach(id=>{var el=document.getElementById(id);if(el)el.classList.remove('active');});
+}
+
+function simuler() {
+  const prix     = parseFloat(document.getElementById('sPrix').value)||150;
+  const pctClin  = (parseFloat(document.getElementById('sPctClinique').value)||30)/100;
+  const patients = parseFloat(document.getElementById('sPatientsNum').value)||18;
+  const semaines = parseFloat(document.getElementById('sSemainesNum').value)||48;
+  const depAnnee = parseFloat(document.getElementById('sDepenses').value)||0;
+
+  const brut    = prix * patients * semaines;
+  const comis   = brut * pctClin;
+  const netClin = brut - comis;  // revenu net clinique ($105/session)
+
+  const fiscal  = calcFiscalComplet(netClin, depAnnee);
+  const poche   = fiscal.net;
+  const heures  = patients * semaines;
+  const parHeure = poche / heures;
+
+  // KPIs
+  document.getElementById('skNetAn').textContent    = '$'+netClin.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('skNetAnSub').textContent  = '$'+(netClin/12).toFixed(0)+'/mois · $'+(netClin/semaines).toFixed(0)+'/sem';
+  document.getElementById('skImpots').textContent   = '-$'+fiscal.total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('skImpotsP').textContent  = fiscal.pct.toFixed(1)+'% du net clinique';
+  document.getElementById('skPoche').textContent    = '$'+poche.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('skPocheMois').textContent = '$'+(poche/12).toFixed(0)+'/mois · $'+(poche/semaines).toFixed(0)+'/sem';
+  document.getElementById('skHeure').textContent    = '$'+parHeure.toFixed(2);
+
+  // Décomposition fiscale
+  const d = fiscal.detail;
+  const bars = [
+    {label:'Impôt Québec (TP-1)',   val:d.qc,   color:'#dc2626'},
+    {label:'Impôt Fédéral (T1)',    val:d.fed,  color:'#b91c1c'},
+    {label:'QPP (Annexe U)',        val:d.qpp,  color:'#d97706'},
+    {label:'RQAP (Annexe R)',       val:d.rqap, color:'#f59e0b'},
+    {label:'FSS (Annexe F)',        val:d.fss,  color:'#6b7280'},
+  ];
+  document.getElementById('stratFiscal').innerHTML = bars.map(b => {
+    const pct = fiscal.total > 0 ? (b.val/fiscal.total*100).toFixed(0) : 0;
+    const w   = fiscal.total > 0 ? (b.val/netClin*100).toFixed(1) : 0;
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+        <span>${b.label}</span>
+        <span style="font-weight:600">$${b.val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')} <span style="color:var(--text3);font-weight:400">(${w}%)</span></span>
+      </div>
+      <div style="background:var(--border);border-radius:99px;height:7px">
+        <div style="background:${b.color};border-radius:99px;height:7px;width:${pct}%;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('') + `<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:10px;border-top:2px solid var(--border)">
+    <span>TOTAL À METTRE DE CÔTÉ</span>
+    <span>$${fiscal.total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')} (${fiscal.pct.toFixed(1)}%)</span>
+  </div>`;
+
+  // Lecture stratégique
+  const msgs = [];
+
+  // Agenda optimale
+  if(patients < 15) msgs.push({icon:'📈', txt:'<b>Moins de 15 patients/sem :</b> marge de croissance importante. Chaque patient supplémentaire ajoute $'+(prix*(1-pctClin)*(1-fiscal.pct/100)*semaines/semaines).toFixed(0)+'/sem net.'});
+  else if(patients <= 20) msgs.push({icon:'✅', txt:'<b>Zone optimale (15-20 patients/sem) :</b> bon équilibre revenu / charge clinique.'});
+  else msgs.push({icon:'⚠️', txt:'<b>Plus de 20 patients/sem :</b> attention à la fatigue de compassion. Le $/heure effectif tend à baisser après 20 patients.'});
+
+  // Impact tarif
+  const diff5 = (prix+5)*(1-pctClin)*patients*semaines*(1-fiscal.pct/100) - poche;
+  msgs.push({icon:'💡', txt:`<b>+$5 par session</b> = +$${diff5.toFixed(0)} dans votre poche par an.`});
+
+  // Dépenses
+  if(depAnnee < 2000) msgs.push({icon:'🧾', txt:'<b>Dépenses déductibles faibles.</b> Pensez à déduire : OPQ ($'+Math.round(650).toLocaleString()+'), assurance resp., internet, formation.'});
+  else msgs.push({icon:'🧾', txt:`<b>Dépenses déductibles :</b> $${depAnnee.toLocaleString()} → économie fiscale estimée $${(depAnnee*fiscal.pct/100).toFixed(0)}.`});
+
+  // Vacances
+  const diffVac = (50-semaines);
+  if(diffVac>0) msgs.push({icon:'🏖️', txt:`<b>${diffVac} semaines de vacances/an</b> → coût net : $${(diffVac*(prix*(1-pctClin))*(1-fiscal.pct/100)*patients).toFixed(0)}.`});
+
+  document.getElementById('stratLecture').innerHTML = msgs.map(m =>
+    `<div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.6">
+      <span style="font-size:20px;flex-shrink:0">${m.icon}</span><span>${m.txt}</span>
+    </div>`
+  ).join('');
+}
+
 function showTab(tab) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1398,6 +1583,7 @@ function showTab(tab) {
   if(tab==='depenses') renderDepenses();
   if(tab==='clients'){renderClientTable();updateClientCount();}
   if(tab==='resume') loadResume();
+  if(tab==='strategie') simuler();
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function v(id){return document.getElementById(id).value.trim();}
