@@ -447,12 +447,12 @@ tbody td { padding: 11px 15px; }
     </div>
   </div>
   <div class="g4 mb20">
-    <div class="stat"><div class="stat-ico">💰</div><div class="stat-lbl">Revenu Net (Clinique)</div><div class="stat-val" id="stNetAnnee">—</div><div class="stat-sub">Après frais clinique</div></div>
-    <div class="stat"><div class="stat-ico">💳</div><div class="stat-lbl">Dépenses Pro</div><div class="stat-val c-red" id="stDepenses">—</div><div class="stat-sub">Déductibles d'impôts</div></div>
-    <div class="stat"><div class="stat-ico">🏛️</div><div class="stat-lbl">Impôts Est.</div><div class="stat-val c-red" id="stTaxes">—</div><div class="stat-sub">Prov + Féd + RRQ + RQAP</div></div>
-    <div class="stat"><div class="stat-ico">💵</div><div class="stat-lbl">Dans vos poches</div><div class="stat-val c-green" id="stReal">—</div><div class="stat-sub">Bénéfice net final</div></div>
+    <div class="stat"><div class="stat-ico">💰</div><div class="stat-lbl">Revenu Net (Clinique)</div><div class="stat-val" id="stNetAnnee">—</div><div class="stat-sub">Après frais clinique · YTD</div></div>
+    <div class="stat"><div class="stat-ico">💳</div><div class="stat-lbl">Dépenses Pro</div><div class="stat-val c-red" id="stDepenses">—</div><div class="stat-sub">Déductibles TP-80</div></div>
+    <div class="stat"><div class="stat-ico">🏛️</div><div class="stat-lbl">Impôts estimés</div><div class="stat-val c-red" id="stTaxes">—</div><div class="stat-sub">QC + Féd + QPP + RQAP + FSS</div></div>
+    <div class="stat"><div class="stat-ico">💵</div><div class="stat-lbl">Dans vos poches</div><div class="stat-val c-green" id="stReal">—</div><div class="stat-sub">Net après tout</div></div>
   </div>
-  <div class="alert alert-info">💡 Les impôts sont calculés sur votre <strong>Revenu Imposable</strong> (Revenu Net - Dépenses déductibles).</div>
+  <div class="alert alert-info">💡 Les impôts sont estimés avec le <strong>taux annuel projeté</strong> (TP-1 2024 : QC + Fédéral + QPP + RQAP + FSS). Basé sur le mois sélectionné × 12 si peu de mois sont enregistrés.</div>
   <div class="g2">
     <div class="card"><div class="card-title">Clients fréquents</div><div class="card-sub">Ce mois</div><div id="topClients"></div></div>
     <div class="card"><div class="card-title">Répartition par tarif</div><div class="card-sub">Sessions par tarif</div><div id="tarifBreak"></div></div>
@@ -1389,12 +1389,25 @@ function loadResume() {
   const netAnnuel=sessAnnee.reduce((a,s)=>a+Number(s.Net),0);
   const expAnnee=depenses.filter(e=>e.date&&e.date.startsWith(String(y)));
   const totalDep=expAnnee.reduce((a,e)=>a+(e.amountDed||0),0);
-  const revImposable=Math.max(0,netAnnuel-totalDep);
-  const taxes=estimarImpuestos(revImposable)+estimarCotizaciones(revImposable);
-  const revReel=netAnnuel-totalDep-taxes;
+
+  // Même logique que Facture: projeter sur année complète si peu de mois enregistrés
+  // pour éviter un taux fiscal faussement bas (~5% avec 1 seul mois)
+  const moisUniques=new Set(sessAnnee.map(s=>s.Mois)).size||1;
+  const netMoisActuel=sessMois.reduce((a,s)=>a+Number(s.Net),0);
+  const netProjette=netMoisActuel>0?netMoisActuel*12:netAnnuel*(12/moisUniques);
+  const baseCalcFiscal=Math.max(netAnnuel,netProjette);
+
+  // Calcul officiel TP-1 2024 — 5 composantes
+  const fiscal=calcFiscalComplet(baseCalcFiscal, totalDep);
+  const tauxEff=baseCalcFiscal>0?fiscal.total/baseCalcFiscal:0.40;
+
+  // Affichage basé sur le net annuel RÉEL enregistré
+  const taxesReelles=round2(netAnnuel*tauxEff);
+  const revReel=netAnnuel-totalDep-taxesReelles;
+
   document.getElementById('stNetAnnee').textContent=netAnnuel>0?`$${netAnnuel.toFixed(0)}`:'—';
   document.getElementById('stDepenses').textContent=totalDep>0?`-$${totalDep.toFixed(0)}`:'—';
-  document.getElementById('stTaxes').textContent=taxes>0?`-$${taxes.toFixed(0)}`:'—';
+  document.getElementById('stTaxes').textContent=taxesReelles>0?`-$${taxesReelles.toFixed(0)}`:'—';
   document.getElementById('stReal').textContent=revReel>0?`$${revReel.toFixed(0)}`:'—';
 
   const freq={};
