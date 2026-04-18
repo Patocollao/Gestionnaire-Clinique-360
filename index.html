@@ -897,7 +897,16 @@ async function syncData() {
     const s=await callScript('getSessions');
     sessions=s.data||[];
     const d=await callScript('getDepenses');
-    depenses=(d.data||[]).map(e=>({...e,pctDed:Number(e.pctDed)||100,amountTotal:Number(e.amountTotal)||0,amountDed:Number(e.amountDed)||0}));
+    depenses=(d.data||[]).map(e=>({
+      ...e,
+      // Normaliser les clés — le Sheet peut retourner "Date" ou "date"
+      date: e.date || e.Date || '',
+      category: e.category || e.Categorie || e.Category || '',
+      pctDed: Number(e.pctDed || e.PctDed) || 100,
+      amountTotal: Number(e.amountTotal || e.MontantTotal) || 0,
+      amountDed: Number(e.amountDed || e.MontantDed) || 0,
+      notes: e.notes || e.Notes || ''
+    }));
     renderClientTable(); loadTodaySessions(); updateClientCount(); renderDepenses();
     const now=new Date();
     const t=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
