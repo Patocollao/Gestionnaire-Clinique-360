@@ -551,6 +551,37 @@ tbody td { padding: 11px 15px; }
         <div class="stat"><div class="stat-ico">⏱️</div><div class="stat-lbl">$/heure effectif</div><div class="stat-val" id="skHeure">—</div><div class="stat-sub">après impôts</div></div>
       </div>
 
+      <!-- Semanal / Mensual -->
+      <div class="card mb20">
+        <div class="card-title" style="font-size:16px;margin-bottom:14px">Semanal &amp; Mensual</div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;font-size:13.5px;border-collapse:collapse">
+            <thead>
+              <tr style="background:var(--surface2)">
+                <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)"></th>
+                <th style="padding:9px 12px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)">Ingresas</th>
+                <th style="padding:9px 12px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)">🏦 Guardar</th>
+                <th style="padding:9px 12px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)">💵 Disponible</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 12px;font-weight:600">📅 Semaine</td>
+                <td style="padding:10px 12px;text-align:right" id="skSemIngresas">—</td>
+                <td style="padding:10px 12px;text-align:right;color:var(--danger);font-weight:600" id="skSemGuardar">—</td>
+                <td style="padding:10px 12px;text-align:right;color:var(--accent);font-weight:700" id="skSemDisp">—</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 12px;font-weight:600">📆 Mois</td>
+                <td style="padding:10px 12px;text-align:right" id="skMoisIngresas">—</td>
+                <td style="padding:10px 12px;text-align:right;color:var(--danger);font-weight:600" id="skMoisGuardar">—</td>
+                <td style="padding:10px 12px;text-align:right;color:var(--accent);font-weight:700" id="skMoisDisp">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Décomposition fiscale -->
       <div class="card mb20">
         <div class="card-title">Décomposition fiscale</div>
@@ -1520,6 +1551,22 @@ function simuler() {
   document.getElementById('skPoche').textContent    = '$'+poche.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
   document.getElementById('skPocheMois').textContent = '$'+(poche/12).toFixed(0)+'/mois · $'+(poche/semaines).toFixed(0)+'/sem';
   document.getElementById('skHeure').textContent    = '$'+parHeure.toFixed(2);
+
+  // Semanal / Mensual
+  const fmt = n => '$'+n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  const netSem   = netClin / semaines;
+  const impSem   = fiscal.total / semaines;
+  const dispSem  = poche / semaines;
+  const netMois  = netClin / 12;
+  const impMois  = fiscal.total / 12;
+  const dispMois = poche / 12;
+
+  document.getElementById('skSemIngresas').textContent  = fmt(netSem);
+  document.getElementById('skSemGuardar').textContent   = fmt(impSem);
+  document.getElementById('skSemDisp').textContent      = fmt(dispSem);
+  document.getElementById('skMoisIngresas').textContent = fmt(netMois);
+  document.getElementById('skMoisGuardar').textContent  = fmt(impMois);
+  document.getElementById('skMoisDisp').textContent     = fmt(dispMois);
 
   // Décomposition fiscale
   const d = fiscal.detail;
