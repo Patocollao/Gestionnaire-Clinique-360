@@ -706,8 +706,8 @@ function updateHighlight() {
 function loadCfg() {
   try { cfg = JSON.parse(localStorage.getItem('clinique360_cfg')||'{}'); } catch(e){ cfg={}; }
   if(!cfg.pct) cfg.pct=30;
-  if(!cfg.nomPro) cfg.nomPro='Sergio Aguirre Urrutia';
-  if(!cfg.titrePro) cfg.titrePro='Psychologue';
+  if(!cfg.nomPro) cfg.nomPro='Briseida Quintana-Camacho';
+  if(!cfg.titrePro) cfg.titrePro='Candidate au permis de psychologue par voie d\'équivalences';
   if(!cfg.nomClinique) cfg.nomClinique='Clinique Réseau 360';
   if(!cfg.adresse) cfg.adresse='2480 Ch Ste-Foy #200, Québec City, QC G1V 1T6';
   if(!cfg.tel) cfg.tel='(418) 952-1723';
@@ -924,10 +924,14 @@ function loadFacture() {
   const netAnnuel=sessAnnee.reduce((a,s)=>a+Number(s.Net),0);
   const expAnnee=depenses.filter(e=>e.date&&e.date.startsWith(String(y)));
   const totalDep=expAnnee.reduce((a,e)=>a+(e.amountDed||0),0);
-  // Calcul officiel TP-1 2024: 5 composantes (ImpQC+ImpFed+QPP+RQAP+FSS)
-  // Les dépenses TP-80 réduisent le revenu imposable
-  const fiscalAnnuel=calcFiscalComplet(netAnnuel, totalDep);
-  const tauxEff=netAnnuel>0?fiscalAnnuel.total/netAnnuel:0.40;
+  // Calcul officiel TP-1 2024 — IMPORTANT: on projette le revenu annuel
+  // sur base du mois sélectionné × 12 pour obtenir un taux fiscal réaliste.
+  // Sinon avec 1 seul mois enregistré le % serait faussement bas (~5%).
+  const totNmois=sess.reduce((a,s)=>a+Number(s.Net),0);
+  const netProjetteAnnuel = totNmois > 0 ? totNmois * 12 : (netAnnuel > 0 ? netAnnuel * (12 / Math.max(1, new Set(sessAnnee.map(s=>s.Mois)).size)) : 0);
+  const depProjetteesAnnuel = totalDep > 0 ? totalDep : 0;
+  const fiscalAnnuel = calcFiscalComplet(Math.max(netAnnuel, netProjetteAnnuel), depProjetteesAnnuel);
+  const tauxEff = netProjetteAnnuel > 0 ? fiscalAnnuel.total / Math.max(netAnnuel, netProjetteAnnuel) : 0.40;
 
   const numF=`${String(m).padStart(2,'0')}-${String(y).slice(-2)}`;
   document.getElementById('invNum').textContent=`Facture # ${numF}`;
@@ -940,13 +944,6 @@ function loadFacture() {
   const totT=sess.reduce((a,s)=>a+Number(s.Tarif),0);
   const totF=sess.reduce((a,s)=>a+Number(s.Frais),0);
   const totN=sess.reduce((a,s)=>a+Number(s.Net),0);
-  // ===== TASA REAL =====
-const revenuAnnuel = totN * 12;
-
-let tauxEff = 0.39;
-
-if (revenuAnnuel > 100000) tauxEff = 0.40;
-if (revenuAnnuel < 80000) tauxEff = 0.37;
   const aMettreDecote = round2(totN * tauxEff);
   const netPoche      = round2(totN - aMettreDecote);
   const pctAffiche    = (tauxEff*100).toFixed(1);
@@ -970,7 +967,7 @@ if (revenuAnnuel < 80000) tauxEff = 0.37;
       <td>$${Number(s.Tarif).toFixed(2)}</td>
       <td class="c-red">-$${Number(s.Frais).toFixed(2)}</td>
       <td class="c-green fw6">$${Number(s.Net).toFixed(2)}</td>
-      <td style="color:var(--warning);background:#fffbeb">-$${(Number(s.Net) * (revenuAnnuel > 100000 ? 0.40 : revenuAnnuel < 80000 ? 0.37 : 0.39)).toFixed(2)}</td>
+      <td style="color:var(--warning);background:#fffbeb">-$${(Number(s.Net)*tauxEff).toFixed(2)}</td>
     </tr>`).join('')}</tbody>
     <tfoot><tr>
       <td class="tfoot" colspan="2">TOTAL — ${sess.length} sessions</td>
