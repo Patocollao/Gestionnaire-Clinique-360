@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestionnaire — Clinique Réseau 360</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1462,8 +1462,8 @@ function loadFacture() {
   `;
 }
 
-function exportFacture() {
-  if(typeof XLSX==='undefined'){
+async function exportFacture() {
+  if(typeof ExcelJS==='undefined'){
     toast('❌ Le module Excel n\'a pas pu être chargé. Vérifiez la connexion Internet.','error');
     return;
   }
@@ -1483,78 +1483,167 @@ function exportFacture() {
   const totN=sess.reduce((a,s)=>a+Number(s.Net),0);
   const pct=cfg.pct||30;
 
-  // Construire un véritable classeur XLSX. Avant, l'application téléchargeait
-  // une page HTML renommée en .xls, d'où l'avertissement de format d'Excel.
-  const rows=[
-    ['FACTURE','','','','N°',numF],
-    ['Services professionnels en psychologie','','','','Date',dateStr],
-    [],
-    ['Professionnel',cfg.nomPro||'','','','Période',`${MOIS[m-1]} ${y}`],
-    ['Titre',cfg.titrePro||''],
-    ['Destinataire',cfg.nomClinique||''],
-    ['Adresse',cfg.adresse||''],
-    ['Téléphone',cfg.tel||''],
-    [],
-    ['DATE','CLIENT (LOI 25)','TARIF BRUT',`FRAIS CLINIQUE (${pct}%)`,'NET VERSÉ','DESCRIPTION / NOTES']
-  ];
+  const wb=new ExcelJS.Workbook();
+  wb.creator=cfg.nomPro||'Gestionnaire Clinique 360';
+  wb.company=cfg.nomClinique||'';
+  wb.created=now;
+  wb.modified=now;
+  wb.subject=`Services professionnels — ${moisStr}`;
+  wb.title=`Facture ${numF}`;
 
-  sess.forEach(s=>{
-    const normalized=normalizeDate(s.Date_Session);
-    const parts=normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    const excelDate=parts ? new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3])) : normalized;
-    rows.push([
-      excelDate,
-      getConfidentialName(s),
-      Number(s.Tarif)||0,
-      -(Number(s.Frais)||0),
-      Number(s.Net)||0,
-      s.Notes||''
-    ]);
+  const ws=wb.addWorksheet('Facture',{
+    views:[{state:'frozen',ySplit:14,showGridLines:false}],
+    pageSetup:{
+      orientation:'portrait',paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:0,
+      margins:{left:0.35,right:0.35,top:0.45,bottom:0.45,header:0.2,footer:0.2}
+    },
+    properties:{defaultRowHeight:18}
   });
 
-  const totalRow=rows.length;
-  rows.push([`TOTAL — ${sess.length} consultation(s)`,'',totT,-totF,totN,'']);
-
-  const ws=XLSX.utils.aoa_to_sheet(rows,{cellDates:true});
-  ws['!merges']=[
-    {s:{r:0,c:0},e:{r:0,c:3}},
-    {s:{r:1,c:0},e:{r:1,c:3}},
-    {s:{r:3,c:1},e:{r:3,c:3}},
-    {s:{r:4,c:1},e:{r:4,c:5}},
-    {s:{r:5,c:1},e:{r:5,c:5}},
-    {s:{r:6,c:1},e:{r:6,c:5}},
-    {s:{r:7,c:1},e:{r:7,c:5}},
-    {s:{r:totalRow,c:0},e:{r:totalRow,c:1}}
+  ws.columns=[
+    {key:'date',width:14},{key:'client',width:26},{key:'tarif',width:15},
+    {key:'frais',width:19},{key:'net',width:15},{key:'notes',width:35}
   ];
-  ws['!cols']=[{wch:13},{wch:25},{wch:15},{wch:22},{wch:15},{wch:35}];
-  ws['!rows']=[{hpt:28},{hpt:20},,{hpt:20},,,,{},{hpt:8},{hpt:24}];
-  ws['!autofilter']={ref:`A10:F${totalRow}`};
-  ws['!freeze']={xSplit:0,ySplit:10,topLeftCell:'A11',activePane:'bottomLeft',state:'frozen'};
 
-  for(let r=10;r<totalRow;r++){
-    const dateCell=ws[`A${r+1}`];
-    if(dateCell&&dateCell.t==='d') dateCell.z='dd-mm-yyyy';
-    ['C','D','E'].forEach(col=>{const cell=ws[`${col}${r+1}`];if(cell)cell.z='$#,##0.00;[Red]-$#,##0.00';});
-  }
-  ['C','D','E'].forEach(col=>{const cell=ws[`${col}${totalRow+1}`];if(cell)cell.z='$#,##0.00;[Red]-$#,##0.00';});
+  const black='FF111827',gray='FF6B7280',lightGray='FFF3F4F6';
+  const borderGray='FFD1D5DB',red='FFDC2626',green='FF166534',white='FFFFFFFF';
+  const moneyFmt='$#,##0.00;[Red]-$#,##0.00';
+  const thinBottom={style:'thin',color:{argb:borderGray}};
 
-  const wb=XLSX.utils.book_new();
-  wb.Props={
-    Title:`Facture ${numF}`,
-    Subject:`Services professionnels — ${moisStr}`,
-    Author:cfg.nomPro||'',
-    Company:cfg.nomClinique||'',
-    CreatedDate:now
-  };
-  XLSX.utils.book_append_sheet(wb,ws,'Facture');
+  // En-tête de facture — style sobre identique à la facture originale.
+  ws.mergeCells('A2:D3');
+  const titleCell=ws.getCell('A2');
+  titleCell.value='FACTURE';
+  titleCell.font={name:'Aptos Display',size:28,bold:true,color:{argb:black}};
+  titleCell.alignment={vertical:'middle',horizontal:'left'};
+
+  ws.mergeCells('A4:D4');
+  ws.getCell('A4').value='Services professionnels en psychologie';
+  ws.getCell('A4').font={name:'Aptos',size:9,color:{argb:gray}};
+
+  ws.mergeCells('E2:F2');
+  ws.getCell('E2').value=`N° ${numF}`;
+  ws.getCell('E2').font={name:'Aptos',size:14,bold:true,color:{argb:black}};
+  ws.getCell('E2').alignment={horizontal:'right',vertical:'middle'};
+  ws.mergeCells('E3:F3');
+  ws.getCell('E3').value=`Date : ${dateStr}`;
+  ws.getCell('E3').font={name:'Aptos',size:9,color:{argb:gray}};
+  ws.getCell('E3').alignment={horizontal:'right'};
+
+  ws.mergeCells('A6:C6');
+  ws.getCell('A6').value='Professionnel';
+  ws.mergeCells('E6:F6');
+  ws.getCell('E6').value='Période';
+  ['A6','E6'].forEach(ref=>{
+    ws.getCell(ref).font={name:'Aptos',size:8,color:{argb:gray}};
+    ws.getCell(ref).alignment={horizontal:ref==='E6'?'right':'left'};
+  });
+
+  ws.mergeCells('A7:C7');
+  ws.getCell('A7').value=cfg.nomPro||'—';
+  ws.getCell('A7').font={name:'Aptos',size:11,bold:true,color:{argb:black}};
+  ws.mergeCells('E7:F7');
+  ws.getCell('E7').value=`${MOIS[m-1]} ${y}`;
+  ws.getCell('E7').font={name:'Aptos',size:11,bold:true,color:{argb:black}};
+  ws.getCell('E7').alignment={horizontal:'right'};
+  ws.mergeCells('A8:D8');
+  ws.getCell('A8').value=cfg.titrePro||'';
+  ws.getCell('A8').font={name:'Aptos',size:9,color:{argb:gray}};
+
+  ws.mergeCells('A10:F10');
+  ws.getCell('A10').value='Destinataire';
+  ws.getCell('A10').font={name:'Aptos',size:8,color:{argb:gray}};
+  ws.mergeCells('A11:F11');
+  ws.getCell('A11').value=cfg.nomClinique||'—';
+  ws.getCell('A11').font={name:'Aptos',size:11,bold:true,color:{argb:black}};
+  ws.mergeCells('A12:F12');
+  ws.getCell('A12').value=cfg.adresse||'';
+  ws.getCell('A12').font={name:'Aptos',size:9,color:{argb:gray}};
+  ws.mergeCells('A13:F13');
+  ws.getCell('A13').value=cfg.tel||'';
+  ws.getCell('A13').font={name:'Aptos',size:9,color:{argb:gray}};
+
+  const headerRow=14;
+  ws.getRow(headerRow).values=['DATE','CLIENT (LOI 25)','TARIF BRUT',`FRAIS CLINIQUE (${pct}%)`,'NET VERSÉ','DESCRIPTION / NOTES'];
+  ws.getRow(headerRow).height=24;
+  ws.getRow(headerRow).eachCell(cell=>{
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:lightGray}};
+    cell.font={name:'Aptos',size:9,bold:true,color:{argb:black}};
+    cell.alignment={vertical:'middle',horizontal:'left'};
+    cell.border={top:{style:'medium',color:{argb:black}},bottom:{style:'medium',color:{argb:black}}};
+  });
+  ['C14','D14','E14'].forEach(ref=>ws.getCell(ref).alignment={vertical:'middle',horizontal:'right'});
+
+  sess.forEach((s,index)=>{
+    const normalized=normalizeDate(s.Date_Session);
+    const parts=normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const excelDate=parts?new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3])):normalized;
+    const row=ws.addRow([
+      excelDate,getConfidentialName(s),Number(s.Tarif)||0,
+      -(Number(s.Frais)||0),Number(s.Net)||0,s.Notes||''
+    ]);
+    row.height=21;
+    row.eachCell(cell=>{
+      cell.font={name:'Aptos',size:10,color:{argb:black}};
+      cell.alignment={vertical:'middle',horizontal:'left',wrapText:false};
+      cell.border={bottom:thinBottom};
+      if(index%2===1) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFAFAFA'}};
+    });
+    row.getCell(1).numFmt='dd-mm-yyyy';
+    [3,4,5].forEach(c=>{row.getCell(c).numFmt=moneyFmt;row.getCell(c).alignment={vertical:'middle',horizontal:'right'};});
+    row.getCell(4).font={name:'Aptos',size:10,color:{argb:red}};
+    row.getCell(5).font={name:'Aptos',size:10,bold:true,color:{argb:green}};
+    row.getCell(6).alignment={vertical:'middle',horizontal:'left',wrapText:true};
+    if(s.Notes) row.height=30;
+  });
+
+  const totalRow=ws.addRow([`TOTAL — ${sess.length} consultation(s)`,'',totT,-totF,totN,'']);
+  ws.mergeCells(`A${totalRow.number}:B${totalRow.number}`);
+  totalRow.height=26;
+  totalRow.eachCell(cell=>{
+    cell.font={name:'Aptos',size:10,bold:true,color:{argb:black}};
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:lightGray}};
+    cell.border={top:{style:'double',color:{argb:black}},bottom:{style:'thin',color:{argb:black}}};
+    cell.alignment={vertical:'middle'};
+  });
+  [3,4,5].forEach(c=>{totalRow.getCell(c).numFmt=moneyFmt;totalRow.getCell(c).alignment={vertical:'middle',horizontal:'right'};});
+  totalRow.getCell(4).font={name:'Aptos',size:10,bold:true,color:{argb:red}};
+  totalRow.getCell(5).font={name:'Aptos',size:11,bold:true,color:{argb:green}};
+
+  const signRow=totalRow.number+4;
+  ws.mergeCells(`D${signRow}:F${signRow}`);
+  ws.getCell(`D${signRow}`).value='Signature du professionnel';
+  ws.getCell(`D${signRow}`).font={name:'Aptos',size:8,color:{argb:gray}};
+  ws.getCell(`D${signRow}`).alignment={horizontal:'center'};
+  ws.getCell(`D${signRow}`).border={top:{style:'thin',color:{argb:gray}}};
+  ws.mergeCells(`D${signRow+1}:F${signRow+1}`);
+  ws.getCell(`D${signRow+1}`).value=cfg.nomPro||'';
+  ws.getCell(`D${signRow+1}`).font={name:'Aptos',size:9,color:{argb:black}};
+  ws.getCell(`D${signRow+1}`).alignment={horizontal:'center'};
+
+  ws.pageSetup.printArea=`A1:F${signRow+2}`;
+  ws.headerFooter.oddFooter='&LFacture '+numF+'&RPage &P de &N';
 
   const safeClinic=(cfg.nomClinique||'Clinique')
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'');
-  XLSX.writeFile(wb,`Facture_${numF}_${safeClinic||'Clinique'}.xlsx`,{
-    bookType:'xlsx',compression:true,cellDates:true
-  });
-  toast('✅ Facture Excel (.xlsx) exportée!');
+
+  try{
+    const buffer=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`Facture_${numF}_${safeClinic||'Clinique'}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast('✅ Facture Excel professionnelle exportée!');
+  }catch(e){
+    console.error(e);
+    toast('❌ Impossible de générer la facture Excel','error');
+  }
 }
 
 // ════════════════════════════════════════════════════════
