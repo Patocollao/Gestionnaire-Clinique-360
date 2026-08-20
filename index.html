@@ -846,6 +846,7 @@ tbody td { padding: 11px 15px; }
 //  STATE & CONSTANTS
 // ════════════════════════════════════════════════════════
 let cfg = {}, clients = [], sessions = [], depenses = [], isDemo = false;
+const REQUIRED_BACKEND_VERSION = '4.2.0';
 let selectedClient = null;
 let highlightedIndex = -1;
 let currentWeek = 1;
@@ -1209,7 +1210,14 @@ async function saveSession() {
       sessions.push(sess);
       toast('✅ Session enregistrée (démo)');
     } else {
+      const backend=await callScript('ping');
+      if(backend.version!==REQUIRED_BACKEND_VERSION){
+        throw new Error(`Backend ancien ou mauvaise URL (${backend.version||'version inconnue'}). Publiez Apps Script ${REQUIRED_BACKEND_VERSION} avant d'enregistrer.`);
+      }
       const result=await callScript('addSession',sess);
+      if(!result.id||!String(result.id).startsWith('SES_')){
+        throw new Error('Le serveur n’a pas retourné un ID_SESSION valide. La session n’a pas été ajoutée à l’écran.');
+      }
       sess.id=result.id;
       delete sess.allowDuplicate;
       sessions.push(sess);
